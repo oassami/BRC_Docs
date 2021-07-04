@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Users Dashboard</title>
+
+  {% load static %}
+  <!-- Bootstrap TAGS from (getbootstrap.com/docs) -->
+  <!-- CSS -->
+  <link href="{% static 'css\bootstrap.min.css' %}" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+  <!-- JavaScript -->
+  <script src="{% static 'js\bootstrap.bundle.min.js' %}" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+  <!-- Bootstrap TAGS -->
+  <script defer src="{% static 'js\script.js' %}"></script>
+</head>
+
+<body>
+  <div class="container mb-5">
+    <div class="d-flex bd-highlight">
+      <p class="p-2 flex-grow-1 bd-highlight fs-5 fw-bold mt-5">Users Manager
+        <a href="/brc/user/add" class="btn btn-success ms-5" role="button">Add New User</a>
+      </p>
+      <p class="p-3 bd-highlight"><a href="/brc">Home</a></p>
+      <p class="p-3 flex-shrink-1 bd-highlight fw-bold">Welcome {{request.session.first_name}}!</p>
+      <p class="p-3 flex-shrink bd-highlight"><a href="/">Log Out</a></p>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <!-- <th scope="col">ID</th> -->
+          <th scope="col">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Created at</th>
+          <th scope="col">User Level</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in all_users %}
+        <tr>
+          <td>{{user.first_name}} {{user.last_name}}</td>
+          <td>{{user.email}}</td>
+          <td>{{user.created_at|date:"m/d/Y"}}</td>
+          <td>{{user.level}}</td>
+          <td>
+            <a href="/brc/user/edit/{{user.id}}" class="btn btn-primary" role="button">Edit</a>
+            {% if user.id != request.session.user_id %}
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-name="{{user.first_name}}" data-bs-id="{{user.id}}">Delete</button>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Delete a User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <h5 class="modal-body-text"></h5>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">NO</button>
+                <a class="btn btn-danger" id="delete_id" href="#" role="button">YES</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </tbody>
+    </table>
+  </div>
+</body>
+
+</html>

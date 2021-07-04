@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {% if edit %}
+    <title>Edit User Profile</title>
+  {% else %}
+    <title>Add User Profile</title>
+  {% endif %}
+  {% load static %}
+  <!-- Bootstrap TAGS from (getbootstrap.com/docs) -->
+  <!-- CSS -->
+  <link href="{% static 'css\bootstrap.min.css' %}" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+  <!-- JavaScript -->
+  <script src="{% static 'js\bootstrap.bundle.min.js' %}" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+  <!-- Bootstrap TAGS -->
+
+</head>
+
+<body>
+  <div class="container mb-5">
+    <div class="d-flex bd-highlight">
+      <p class="p-2 flex-grow-1 bd-highlight fs-3 fw-bold mt-5">Users Manager</p>
+      <p class="p-3 bd-highlight"><a href="/brc">Home</a></p>
+      <p class="p-3 flex-shrink-1 bd-highlight fw-bold">Welcome {{request.session.first_name}}!</p>
+      <p class="p-3 flex-shrink bd-highlight"><a href="/">Log Out</a></p>
+    </div>
+    {% if edit %}
+    <h4 class="mt-5">Edit User Profile</h4>
+    {% else %}
+    <h4 class="mt-5">Add New User</h4>
+    {% endif %}
+    {% if messages %}
+      {% for message in messages %}
+        <p style="color: red;">{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+    {% if edit %}
+      <form action="/brc/user/edit/{{this_user.id}}" method="POST">
+    {% else %}
+      <form action="/brc/user/add" method="POST">
+    {% endif %}
+      {% csrf_token %}
+      <div class="row g-5 mb-2">
+        <div class="col-2">
+          <label class="form-label">First Name</label>
+        </div>
+        <div class="col-auto">
+          <input type="text" class="form-control" name="first_name" value="{{this_user.first_name}}">
+        </div>
+      </div>
+      <div class="row g-5 mb-2">
+        <div class="col-2">
+          <label class="form-label">Last Name</label>
+        </div>
+        <div class="col-auto">
+          <input type="text" class="form-control" name="last_name" value="{{this_user.last_name}}">
+        </div>
+      </div>
+      <div class="row g-5 mb-2">
+        <div class="col-2">
+          <label class="form-label">Email</label>
+        </div>
+        <div class="col-auto">
+          <input type="email" class="form-control" name="email" value="{{this_user.email}}">
+        </div>
+      </div>
+      <div class="row g-5 mb-2">
+        <div class="col-2">
+          <label class="form-label">User Level</label>
+        </div>
+        <div class="col-2">
+          <select class="form-select" name="level">
+            {% if edit %}
+              <option selected value="{{this_user.level}}">{{this_user.level}}</option>
+              {% if this_user.level == "Admin" %}
+                <option value="Normal">Normal</option>
+              {% else %}
+                <option value="Admin">Admin</option>
+              {% endif %}
+            {% else %}
+              <option selected value="Normal">Normal</option>
+              <option value="Admin">Admin</option>
+            {% endif %}
+          </select>
+        </div>
+      </div>
+      <div class="row g-5 mb-2">
+        <div class="col-2">
+          <label class="form-label">New Password</label>
+        </div>
+        <div class="col-auto">
+          <input type="password" class="form-control" name="password">
+        </div>
+      </div>
+      <div class="row g-5 mb-2">
+        <div class="col-2">
+          <label class="form-label">Confirm New PW</label>
+        </div>
+        <div class="col-auto">
+          <input type="password" class="form-control" name="c_password">
+        </div>
+      </div>
+      <div class="d-grid gap-2 col-2">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form><br>
+    <a href="/brc/users">Back to Users Manager</a>
+  </div>
+</body>
+
+</html>

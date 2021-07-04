@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Main Menu Home Page</title>
+
+  {% load static %}
+  <!-- Bootstrap TAGS from (getbootstrap.com/docs) -->
+  <!-- CSS -->
+  <link href="{% static 'css\bootstrap.min.css' %}" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+  <!-- JavaScript -->
+  <script src="{% static 'js\bootstrap.bundle.min.js' %}" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+  <!-- Bootstrap TAGS -->
+
+</head>
+
+<body>
+  <div class="container mb-5">
+    <div class="d-flex bd-highlight">
+      <img src="{% static 'img\aph_logo.png' %}" alt="APH Logo" width="70" height="50" >
+      <p class="p-2 flex-grow-1 bd-highlight fs-5 fw-bold">BRC Main Menu</p>
+      <p class="p-3 flex-shrink-1 bd-highlight fw-bold">Welcome {{request.session.first_name}}!</p>
+      <p class="p-3 flex-shrink-0 bd-highlight"><a href="/">Log Out</a></p>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <!-- <a class="navbar-brand" href="#">Navbar</a> -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/brc">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Receiving</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Shipping</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Production</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Reports</a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <li><a class="dropdown-item" href="#">Receiving Report</a></li>
+                <li><a class="dropdown-item" href="#">Shipping Report</a></li>
+                <li><a class="dropdown-item" href="#">Production Report</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">House Keeping</a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <li><a class="dropdown-item" href="/brc/employees">Employees</a></li>
+                <li><a class="dropdown-item" href="#">Suppliers</a></li>
+                <li><a class="dropdown-item" href="#">Customers</a></li>
+                <li><a class="dropdown-item" href="#">Tucking Companies</a></li>
+              </ul>
+            </li>
+            {% if request.session.user_level == "Admin" %}
+            <li class="nav-item">
+              <a class="nav-link" href="/brc/users">Manage Users</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link disabled" href="#">Manage Users</a>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
+</body>
+
+</html>
