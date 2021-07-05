@@ -50,8 +50,6 @@ class UserManager(models.Manager):
 
   def editValidation(self, post_data, user):
     errors = {}
-    print(post_data['level'])
-    print(user.level)
     if post_data['level'] == "Normal" and user.level == "Admin":
       admins = self.filter(level="Admin")
       if admins.count() < 2:

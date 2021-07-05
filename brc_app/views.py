@@ -31,14 +31,14 @@ def user_add(request):
     if errors:
       for key, value in errors.items():
         messages.error(request, value)
-      return redirect(f'/brc/user/add')
+      return redirect('/brc/user/add')
     pw_hash = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt()).decode()
     user = User.objects.create(
         first_name = request.POST['first_name'],
         last_name = request.POST['last_name'],
         email = request.POST['email'],
         password = pw_hash,
-        level = request.POST['level']
+        level = request.POST['level'],
     )
   return redirect('/brc/users')
 
@@ -95,7 +95,7 @@ def employees(request):
   if 'logged_in' not in request.session:
     return redirect('/')
   context = {
-    'all_employees': Employee.objects.all(),
+    'all_employees': Employee.objects.all().order_by('emp_id'),
   }
   return render(request, 'employees_list.html', context)
 
@@ -105,29 +105,55 @@ def employee_add(request):
   if request.method == "GET":
     return render(request, 'employee_add_edit.html')
   else:
-    # print('xxx', request.POST['first_name'])
-
     errors = Employee.objects.addValidation(request.POST)
     if errors:
       for key, value in errors.items():
         messages.error(request, value)
       return redirect('/brc/employee/add')
     employee = Employee.objects.create(
+        emp_id = request.POST['emp_id'],
         first_name = request.POST['first_name'],
         last_name = request.POST['last_name'],
-        # email = request.POST['email'],
-        # password = pw_hash,
-        level = request.POST['level']
+        level = request.POST['level'],
     )
   return redirect('/brc/employees')
 
-def employee_edit(request, user_id):
-  pass
-  return redirect('/brc')
+def employee_edit(request, emp_id):
+  if 'logged_in' not in request.session:
+    return redirect('/')
+  emp = Employee.objects.get(id=emp_id)
+  if request.method == 'GET':
+    context={
+      'this_employee': emp,
+      'edit': True
+    }
+    return render(request, 'employee_add_edit.html', context)
+  else:
+    errors = Employee.objects.editValidation(request.POST, emp)
+    if errors:
+      for key, value in errors.items():
+        messages.error(request, value)
+      return redirect(f'/brc/employee/edit/{emp.id}')
+    if request.POST['emp_id']:
+      emp.emp_id = request.POST['emp_id']
+    if request.POST['first_name']:
+      emp.first_name = request.POST['first_name']
+    if request.POST['last_name']:
+      emp.last_name = request.POST['last_name']
+    emp.level = request.POST['level']
+    emp.save()
+  return redirect('/brc/employees')
 
-def employee_delete(request, user_id):
-  pass
-  return redirect('/brc')
+def employee_delete(request, emp_id):
+  if 'logged_in' in request.session:
+    try:
+      emp = Employee.objects.get(id=emp_id)
+      emp.delete()
+    except:
+      pass
+  else:
+    return redirect('/')
+  return redirect('/brc/employees')
 
 def customers(request):
   pass

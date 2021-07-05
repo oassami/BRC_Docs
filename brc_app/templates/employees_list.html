@@ -29,6 +29,7 @@
     <table class="table">
       <thead>
         <tr>
+          <th scope="col">ID</th>
           <th scope="col">Name</th>
           <th scope="col">Created at</th>
           <th scope="col">User Level</th>
@@ -36,14 +37,15 @@
         </tr>
       </thead>
       <tbody>
-        {% for user in all_users %}
+        {% for employee in all_employees %}
         <tr>
-          <td>{{user.first_name}} {{user.last_name}}</td>
-          <td>{{user.created_at|date:"m/d/Y"}}</td>
-          <td>{{user.level}}</td>
+          <td>{{employee.emp_id}}</td>
+          <td>{{employee.first_name}} {{employee.last_name}}</td>
+          <td>{{employee.created_at|date:"m/d/Y"}}</td>
+          <td>{{employee.level}}</td>
           <td>
-            <a href="/brc/employee/edit/{{user.id}}" class="btn btn-primary" role="button">Edit</a>
-            <a href="/brc/employee/delete/{{user.id}}" class="btn btn-danger" role="button">Delete</a>
+            <a href="/brc/employee/edit/{{employee.id}}" class="btn btn-primary" role="button">Edit</a>
+            <a href="/brc/employee/delete/{{employee.id}}" class="btn btn-danger" role="button">Delete</a>
           </td>
         </tr>
         {% endfor %}

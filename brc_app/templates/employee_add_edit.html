@@ -38,17 +38,25 @@
       {% endfor %}
     {% endif %}
     {% if edit %}
-      <form action="/brc/employee/edit/{{this_info.id}}" method="POST">
+    <form action="/brc/employee/edit/{{this_employee.id}}" method="POST">
     {% else %}
-      <form action="/brc/employee/add" method="POST">
+    <form action="/brc/employee/add" method="POST">
     {% endif %}
       {% csrf_token %}
+      <div class="row g-5 mb-2">
+        <div class="col-2">
+          <label class="form-label">Employee ID</label>
+        </div>
+        <div class="col-auto">
+          <input type="text" class="form-control" name="emp_id" value="{{this_employee.emp_id}}">
+        </div>
+      </div>
       <div class="row g-5 mb-2">
         <div class="col-2">
           <label class="form-label">First Name</label>
         </div>
         <div class="col-auto">
-          <input type="text" class="form-control" name="first_name" value="{{this_info.first_name}}">
+          <input type="text" class="form-control" name="first_name" value="{{this_employee.first_name}}">
         </div>
       </div>
       <div class="row g-5 mb-2">
@@ -56,7 +64,7 @@
           <label class="form-label">Last Name</label>
         </div>
         <div class="col-auto">
-          <input type="text" class="form-control" name="last_name" value="{{this_info.last_name}}">
+          <input type="text" class="form-control" name="last_name" value="{{this_employee.last_name}}">
         </div>
       </div>
       <div class="row g-5 mb-2">
@@ -66,8 +74,8 @@
         <div class="col-2">
           <select class="form-select" name="level">
             {% if edit %}
-              <option selected value="{{this_info.level}}">{{this_info.level}}</option>
-              {% if this_info.level == "Supervisor" %}
+              <option selected value="{{this_employee.level}}">{{this_employee.level}}</option>
+              {% if this_employee.level == "Supervisor" %}
                 <option value="Worker">Worker</option>
               {% else %}
                 <option value="Supervisor">Supervisor</option>
@@ -83,7 +91,7 @@
         <button type="submit" class="btn btn-primary">Submit</button>
       </div>
     </form><br>
-    <a href="/brc/employees">Back to Users Manager</a>
+    <a href="/brc/employees">Back to Employees Manager</a>
   </div>
 </body>
 
