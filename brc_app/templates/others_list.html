@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Employee Dashboard</title>
+  <title>{{source}}s Dashboard</title>
 
   {% load static %}
   <!-- Bootstrap TAGS from (getbootstrap.com/docs) -->
@@ -20,7 +20,7 @@
 <body>
   <div class="container mb-5">
     <div class="d-flex bd-highlight">
-      <p class="p-2 flex-grow-1 bd-highlight fs-5 fw-bold mt-5">Employees Manager<a href="/brc/employee/add" class="btn btn-success ms-5" role="button">Add New Employee</a>
+      <p class="p-2 flex-grow-1 bd-highlight fs-5 fw-bold mt-5">{{source}}s Manager<a href="/brc/{{path}}/add" class="btn btn-success ms-5" role="button">Add New {{source}}</a>
       </p>
       <p class="p-3 bd-highlight"><a href="/brc">Home</a></p>
       <p class="p-3 flex-shrink-1 bd-highlight fw-bold">Welcome {{request.session.first_name}}!</p>
@@ -29,38 +29,38 @@
     <table class="table">
       <thead>
         <tr>
-          <th scope="col">ID</th>
           <th scope="col">Name</th>
+          <th scope="col">Address</th>
+          <th scope="col">Phone #</th>
           <th scope="col">Created at</th>
-          <th scope="col">User Level</th>
-          <th scope="col">Emp. Active</th>
+          <th scope="col">{{source}} Active</th>
           <th scope="col">Action</th>
         </tr>
       </thead>
       <tbody>
-        {% for employee in all_employees %}
-        {% if employee.active %}
+        {% for other in all_others %}
+        {% if other.active %}
         <tr>
-          <td>{{employee.emp_id}}</td>
-          <td>{{employee.first_name}} {{employee.last_name}}</td>
-          <td>{{employee.created_at|date:"m/d/Y"}}</td>
-          <td>{{employee.level}}</td>
-          <td>{{employee.active}}</td>
+          <td>{{other.name}}</td>
+          <td>{{other.city}}, {{other.state}}</td>
+          <td>{{other.phone}}</td>
+          <td>{{other.created_at|date:"m/d/Y"}}</td>
+          <td>{{other.active}}</td>
           <td>
-            <a href="/brc/employee/edit/{{employee.id}}" class="btn btn-primary" role="button">Edit</a>
-            <a href="/brc/employee/inactive/{{employee.id}}" class="btn btn-danger" role="button">Deactivate</a>
+            <a href="/brc/{{path}}/edit/{{other.id}}" class="btn btn-primary" role="button">Edit</a>
+            <a href="/brc/{{path}}/inactive/{{other.id}}" class="btn btn-danger" role="button">Deactivate</a>
           </td>
         </tr>
         {% else %}
         <tr>
-          <td><del>{{employee.emp_id}}</del></td>
-          <td><del>{{employee.first_name}} {{employee.last_name}}</del></td>
-          <td><del>{{employee.created_at|date:"m/d/Y"}}</del></td>
-          <td><del>{{employee.level}}</del></td>
-          <td>{{employee.active}}</td>
+          <td><del>{{other.name}}</del></td>
+          <td><del>{{other.city}}, {{other.state}}</del></td>
+          <td><del>{{other.phone}}</del></td>
+          <td><del>{{other.created_at|date:"m/d/Y"}}</del></td>
+          <td>{{other.active}}</td>
           <td>
-            <a href="/brc/employee/edit/{{employee.id}}" class="btn btn-primary disabled" role="button">Edit</a>
-            <a href="/brc/employee/inactive/{{employee.id}}" class="btn btn-success" role="button">Activate</a>
+            <a href="/brc/{{path}}/edit/{{other.id}}" class="btn btn-primary disabled" role="button">Edit</a>
+            <a href="/brc/{{path}}/inactive/{{other.id}}" class="btn btn-success" role="button">Activate</a>
           </td>
         </tr>
         {% endif %}

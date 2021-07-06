@@ -57,10 +57,10 @@
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">House Keeping</a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <li><a class="dropdown-item" href="/brc/employees">Employees</a></li>
-                <li><a class="dropdown-item" href="#">Suppliers</a></li>
-                <li><a class="dropdown-item" href="#">Customers</a></li>
-                <li><a class="dropdown-item" href="#">Tucking Companies</a></li>
+                <li><a class="dropdown-item" href="/brc/employee">Employees</a></li>
+                <li><a class="dropdown-item" href="/brc/customer">Customers</a></li>
+                <li><a class="dropdown-item" href="/brc/supplier">Suppliers</a></li>
+                <li><a class="dropdown-item" href="/brc/trucking">Tucking Companies</a></li>
               </ul>
             </li>
             {% if request.session.user_level == "Admin" %}
@@ -76,6 +76,7 @@
         </div>
       </div>
     </nav>
+    <br><br><p>Add some statistics to this home-page</p>
   </div>
 </body>
 

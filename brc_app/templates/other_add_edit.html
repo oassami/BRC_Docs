@@ -6,9 +6,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   {% if edit %}
-  <title>Edit {{whos}} Profile</title>
+    <title>Edit {{source}} Profile</title>
   {% else %}
-  <title>Add {{whos}} Profile</title>
+    <title>Add a {{source}}</title>
   {% endif %}
   {% load static %}
   <!-- Bootstrap TAGS from (getbootstrap.com/docs) -->
@@ -17,21 +17,20 @@
   <!-- JavaScript -->
   <script src="{% static 'js\bootstrap.bundle.min.js' %}" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
   <!-- Bootstrap TAGS -->
-
 </head>
 
 <body>
   <div class="container mb-5">
     <div class="d-flex bd-highlight">
-      <p class="p-2 flex-grow-1 bd-highlight fs-3 fw-bold mt-5">{{whos}}s Manager</p>
+      <p class="p-2 flex-grow-1 bd-highlight fs-3 fw-bold mt-5">{{source}} Manager</p>
       <p class="p-3 bd-highlight"><a href="/brc">Home</a></p>
       <p class="p-3 flex-shrink-1 bd-highlight fw-bold">Welcome {{request.session.first_name}}!</p>
       <p class="p-3 flex-shrink bd-highlight"><a href="/">Log Out</a></p>
     </div>
     {% if edit %}
-    <h4 class="mt-5">Edit {{whos}} Profile</h4>
+      <h4 class="mt-3">Edit {{source}} Profile</h4>
     {% else %}
-    <h4 class="mt-5">Add New {{whos}}</h4>
+      <h4 class="mt-3">Add New {{source}}</h4>
     {% endif %}
     {% if messages %}
       {% for message in messages %}
@@ -39,77 +38,64 @@
       {% endfor %}
     {% endif %}
     {% if edit %}
-    <form action="/brc/{{whos}}/edit/{{this_info.id}}" method="POST">
+    <form action="/brc/{{path}}/edit/{{this_other.id}}" method="POST">
     {% else %}
-    <form action="/brc/{{whos}}/add" method="POST">
+    <form action="/brc/{{path}}/add" method="POST">
     {% endif %}
       {% csrf_token %}
       <div class="row g-5 mb-2">
         <div class="col-2">
-          <label class="form-label">First Name</label>
+          <label class="form-label">{{source}} Name</label>
         </div>
         <div class="col-auto">
-          <input type="text" class="form-control" name="first_name" value="{{this_user.first_name}}">
+          <input type="text" class="form-control" name="name" value="{{request.session.other_name}}">
         </div>
       </div>
       <div class="row g-5 mb-2">
         <div class="col-2">
-          <label class="form-label">Last Name</label>
+          <label class="form-label">Address</label>
         </div>
         <div class="col-auto">
-          <input type="text" class="form-control" name="last_name" value="{{this_user.last_name}}">
+          <input type="text" class="form-control" name="address" value="{{request.session.other_address}}">
         </div>
       </div>
       <div class="row g-5 mb-2">
         <div class="col-2">
-          <label class="form-label">Email</label>
+          <label class="form-label">City</label>
         </div>
         <div class="col-auto">
-          <input type="email" class="form-control" name="email" value="{{this_user.email}}">
+          <input type="text" class="form-control" name="city" value="{{request.session.other_city}}">
         </div>
       </div>
       <div class="row g-5 mb-2">
         <div class="col-2">
-          <label class="form-label">User Level</label>
+          <label class="form-label">State</label>
         </div>
-        <div class="col-2">
-          <!-- <input type="text" class="form-control" name="email" value="{{this_user.level}}"> -->
-          <select class="form-select" name="level">
-            {% if edit %}
-              <option selected>{{this_user.level}}</option>
-              {% if this_user.level == "Admin" %}
-              <option value="Normal">Normal</option>
-              {% else %}
-              <option value="Admin">Admin</option>
-              {% endif %}
-            {% else %}
-              <option selected>Normal</option>
-              <option value="Normal">Admin</option>
-            {% endif %}
-          </select>
+        <div class="col-auto">
+          <input type="text" class="form-control" name="state" value="{{request.session.other_state}}">
         </div>
       </div>
       <div class="row g-5 mb-2">
         <div class="col-2">
-          <label class="form-label">New Password</label>
+          <label class="form-label">Zip Code</label>
         </div>
         <div class="col-auto">
-          <input type="password" class="form-control" name="password">
+          <input type="text" class="form-control" name="zipcode" value="{{request.session.other_zipcode}}">
         </div>
       </div>
       <div class="row g-5 mb-2">
         <div class="col-2">
-          <label class="form-label">Confirm New PW</label>
+          <label class="form-label">Phone #</label>
         </div>
         <div class="col-auto">
-          <input type="password" class="form-control" name="c_password">
+          <input type="tel" class="form-control" name="phone" value="{{request.session.other_phone}}">
         </div>
       </div>
       <div class="d-grid gap-2 col-2">
         <button type="submit" class="btn btn-primary">Submit</button>
       </div>
     </form><br>
-    <a href="/brc/users">Back to Users Manager</a>
+    <a href="/brc/{{path}}">Back to {{source}}s Manager</a>
   </div>
 </body>
 

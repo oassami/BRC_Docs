@@ -49,7 +49,7 @@
           <td>
             <a href="/brc/user/edit/{{user.id}}" class="btn btn-primary" role="button">Edit</a>
             {% if user.id != request.session.user_id %}
-              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-name="{{user.first_name}}" data-bs-id="{{user.id}}">Delete</button>
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-name="{{user.first_name}}" data-bs-id="{{user.id}}">Delete</button>
             {% endif %}
           </td>
         </tr>

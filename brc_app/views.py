@@ -95,7 +95,7 @@ def employees(request):
   if 'logged_in' not in request.session:
     return redirect('/')
   context = {
-    'all_employees': Employee.objects.all().order_by('emp_id'),
+    'all_employees': Employee.objects.all().order_by('-active', 'emp_id'),
   }
   return render(request, 'employees_list.html', context)
 
@@ -105,7 +105,7 @@ def employee_add(request):
   if request.method == "GET":
     return render(request, 'employee_add_edit.html')
   else:
-    errors = Employee.objects.addValidation(request.POST)
+    errors = Employee.objects.empAddValidation(request.POST)
     if errors:
       for key, value in errors.items():
         messages.error(request, value)
@@ -115,8 +115,9 @@ def employee_add(request):
         first_name = request.POST['first_name'],
         last_name = request.POST['last_name'],
         level = request.POST['level'],
+        active = True,
     )
-  return redirect('/brc/employees')
+  return redirect('/brc/employee')
 
 def employee_edit(request, emp_id):
   if 'logged_in' not in request.session:
@@ -129,7 +130,7 @@ def employee_edit(request, emp_id):
     }
     return render(request, 'employee_add_edit.html', context)
   else:
-    errors = Employee.objects.editValidation(request.POST, emp)
+    errors = Employee.objects.empEditValidation(request.POST, emp)
     if errors:
       for key, value in errors.items():
         messages.error(request, value)
@@ -142,126 +143,215 @@ def employee_edit(request, emp_id):
       emp.last_name = request.POST['last_name']
     emp.level = request.POST['level']
     emp.save()
-  return redirect('/brc/employees')
+  return redirect('/brc/employee')
 
-def employee_delete(request, emp_id):
+def employee_inactive(request, emp_id):
   if 'logged_in' in request.session:
     try:
       emp = Employee.objects.get(id=emp_id)
-      emp.delete()
+      if emp.active:
+        emp.active = False
+      else:
+        emp.active = True
+      emp.save()
     except:
       pass
   else:
     return redirect('/')
-  return redirect('/brc/employees')
+  return redirect('/brc/employee')
 
-def customers(request):
-  pass
-  return render(request, 'users_list.html', context)
+def others(request):
+  request.session['other_name'] = ''
+  request.session['other_address'] = ''
+  request.session['other_city'] = ''
+  request.session['other_state'] = ''
+  request.session['other_zipcode'] = ''
+  request.session['other_phone'] = ''
+  if 'logged_in' not in request.session:
+    return redirect('/')
+  if request.path == '/brc/customer':
+    context = {
+      'all_others': Customer.objects.all().order_by('-active'),
+      'source': 'Customer',
+      'path': 'customer',
+    }
+  elif request.path == '/brc/supplier':
+    context = {
+      'all_others': Supplier.objects.all().order_by('-active'),
+      'source': 'Supplier',
+      'path': 'supplier',
+    }
+  elif request.path == '/brc/trucking':
+    context = {
+      'all_others': Truck.objects.all().order_by('-active'),
+      'source': 'Truck',
+      'path': 'trucking',
+    }
+  return render(request, 'others_list.html', context)
 
-def customer_add(request):
-  pass
-  return redirect('/brc')
+def other_add(request):
+  if 'logged_in' not in request.session:
+      return redirect('/')
+  if request.method == "GET":
+    if request.path == '/brc/customer/add':
+      context = {
+        'source': 'Customer',
+        'path': 'customer',
+        'edit': False
+      }
+    elif request.path == '/brc/supplier/add':
+      context = {
+        'source': 'Supplier',
+        'path': 'supplier',
+        'edit': False
+      }
+    elif request.path == '/brc/trucking/add':
+      context = {
+        'source': 'Truck',
+        'path': 'trucking',
+        'edit': False
+      }
+    else:
+      context={}
+    return render(request, 'other_add_edit.html', context)
+  else:
+    request.session['other_name'] = request.POST['name']
+    request.session['other_address'] = request.POST['address']
+    request.session['other_city'] = request.POST['city']
+    request.session['other_state'] = request.POST['state']
+    request.session['other_zipcode'] = request.POST['zipcode']
+    request.session['other_phone'] = request.POST['phone']
+    if '/brc/customer/add' in request.path:
+      errors = Customer.objects.addValidation(request.POST)
+      if errors:
+        for key, value in errors.items():
+          messages.error(request, value)
+        return redirect('/brc/customer/add')
+      Customer.objects.create(
+          name = request.POST['name'],
+          address = request.POST['address'],
+          city = request.POST['city'],
+          state = request.POST['state'],
+          zipcode = request.POST['zipcode'],
+          phone = request.POST['phone'],
+          active = True)
+      return redirect('/brc/customer')
+    elif '/brc/supplier/add' in request.path:
+      errors = Supplier.objects.addValidation(request.POST)
+      if errors:
+        for key, value in errors.items():
+          messages.error(request, value)
+        return redirect('/brc/supplier/add')
+      Supplier.objects.create(
+          name = request.POST['name'],
+          address = request.POST['address'],
+          city = request.POST['city'],
+          state = request.POST['state'],
+          zipcode = request.POST['zipcode'],
+          phone = request.POST['phone'],
+          active = True)
+      return redirect('/brc/supplier')
+    else:
+      errors = Truck.objects.addValidation(request.POST)
+      if errors:
+        for key, value in errors.items():
+          messages.error(request, value)
+        return redirect('/brc/trucking/add')
+      Truck.objects.create(
+          name = request.POST['name'],
+          address = request.POST['address'],
+          city = request.POST['city'],
+          state = request.POST['state'],
+          zipcode = request.POST['zipcode'],
+          phone = request.POST['phone'],
+          active = True)
+      return redirect('/brc/trucking')
 
-def customer_edit(request, user_id):
-  pass
-  return redirect('/brc')
+def other_edit(request, other_id):
+  if 'logged_in' not in request.session:
+    return redirect('/')
+  if request.method == 'GET':
+    if '/brc/customer/edit' in request.path:
+      context = {
+        'this_other': Customer.objects.get(id=other_id),
+        'source': 'Customer',
+        'path': 'customer',
+        'edit': True
+      }
+    elif '/brc/supplier/edit' in request.path:
+      context = {
+        'this_other': Supplier.objects.get(id=other_id),
+        'source': 'Supplier',
+        'path': 'supplier',
+        'edit': True
+      }
+    elif '/brc/trucking/edit' in request.path:
+      context = {
+        'this_other': Truck.objects.get(id=other_id),
+        'source': 'Trucking',
+        'path': 'trucking',
+        'edit': True
+      }
+    else:
+      context={}
+    request.session['other_name'] = context['this_other'].name
+    request.session['other_address'] = context['this_other'].address
+    request.session['other_city'] = context['this_other'].city
+    request.session['other_state'] = context['this_other'].state
+    request.session['other_zipcode'] = context['this_other'].zipcode
+    request.session['other_phone'] = context['this_other'].phone
+    return render(request, 'other_add_edit.html', context)
+  else:
+    if '/brc/customer/edit' in request.path:
+      other = Customer.objects.get(id=other_id)
+      errors = Customer.objects.editValidation(request.POST, other)
+      path = "customer"
+    elif '/brc/supplier/edit' in request.path:
+      other = Supplier.objects.get(id=other_id)
+      errors = Supplier.objects.editValidation(request.POST, other)
+      path = "supplier"
+    else:
+      other = Truck.objects.get(id=other_id)
+      errors = Truck.objects.editValidation(request.POST, other)
+      path = "trucking"
+    if errors:
+      for key, value in errors.items():
+        messages.error(request, value)
+      return redirect(f'/brc/{path}/edit/{other.id}')
+    if request.POST['name']:
+      other.name = request.POST['name']
+    if request.POST['address']:
+      other.address = request.POST['address']
+    if request.POST['city']:
+      other.city = request.POST['city']
+    if request.POST['state']:
+      other.state = request.POST['state']
+    if request.POST['zipcode']:
+      other.zipcode = request.POST['zipcode']
+    if request.POST['phone']:
+      other.phone = request.POST['phone']
+    other.save()
+  return redirect(f'/brc/{path}')
 
-def customer_delete(request, user_id):
-  pass
-  return redirect('/brc')
-
-def suppliers(request):
-  pass
-  return render(request, 'users_list.html', context)
-
-def supplier_add(request):
-  pass
-  return redirect('/brc')
-
-def supplier_edit(request, user_id):
-  pass
-  return redirect('/brc')
-
-def supplier_delete(request, user_id):
-  pass
-  return redirect('/brc')
-
-def trucking(request):
-  pass
-  return render(request, 'users_list.html', context)
-
-def trucking_add(request):
-  pass
-  return redirect('/brc')
-
-def trucking_edit(request, user_id):
-  pass
-  return redirect('/brc')
-
-def trucking_delete(request, user_id):
-  pass
-  return redirect('/brc')
-
-# def display_snack(request, snack_id):
-#   logged_user = User.objects.get(id=request.session['user_id'])
-#   this_snack = Snack.objects.get(id=snack_id)
-#   users_like = this_snack.likes.all()
-#   users_dislike = this_snack.dislikes.all()
-#   logged_user_like = False
-#   logged_user_dislike = False
-#   if logged_user in users_like:
-#     logged_user_like = True
-#   if logged_user in users_dislike:
-#     logged_user_dislike = True
-#   context = {
-#     'this_snack': this_snack,
-#     'users_like': users_like,
-#     'users_dislike': users_dislike,
-#     'logged_user_like': logged_user_like,
-#     'logged_user_dislike': logged_user_dislike,
-#   }
-#   return render(request, 'snack_disp.html', context)
-
-
-# def user_edit(request):
-#   user = User.objects.get(id=request.session['user_id'])
-#   if request.method == 'GET':
-#     context={
-#       'this_user': user,
-#     }
-#     return render(request, 'user_edit.html', context)
-#   else:
-#     errors = User.objects.editValidator(request.POST, user)
-#     if errors:
-#       for key, value in errors.items():
-#         messages.error(request, value)
-#       return redirect('/snacks/user/edit')
-#     if request.POST['first_name']:
-#       user.first_name = request.POST['first_name']
-#     if request.POST['last_name']:
-#       user.last_name = request.POST['last_name']
-#     if request.POST['email']:
-#       user.email = request.POST['email']
-#       request.session['email'] = user.email
-#     if request.POST['password']:
-#       user.password = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt()).decode()
-#     user.save()
-#   return redirect(f'/snacks/user/{user.id}')
-
-
-
-
-# def like_snack(request, snack_id):
-#   this_user = User.objects.get(id=request.session['user_id'])
-#   this_snack = Snack.objects.get(id=snack_id)
-#   this_snack.likes.add(this_user)
-#   this_snack.dislikes.remove(this_user)
-#   return redirect(f'/snacks/{snack_id}')
-
-# def dislike_snack(request, snack_id):
-#   this_user = User.objects.get(id=request.session['user_id'])
-#   this_snack = Snack.objects.get(id=snack_id)
-#   this_snack.likes.remove(this_user)
-#   this_snack.dislikes.add(this_user)
-#   return redirect(f'/snacks/{snack_id}')
+def other_inactive(request, other_id):
+  if 'logged_in' in request.session:
+    try:
+      if '/brc/customer/inactive' in request.path:
+        other = Customer.objects.get(id=other_id)
+        path = "customer"
+      elif '/brc/supplier/inactive' in request.path:
+        other = Supplier.objects.get(id=other_id)
+        path = "supplier"
+      else:
+        other = Truck.objects.get(id=other_id)
+        path = "trucking"
+      if other.active:
+        other.active = False
+      else:
+        other.active = True
+      other.save()
+    except:
+      pass
+  else:
+    return redirect('/')
+  return redirect(f'/brc/{path}')
