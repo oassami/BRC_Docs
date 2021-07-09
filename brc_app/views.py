@@ -161,14 +161,14 @@ def employee_inactive(request, emp_id):
   return redirect('/brc/employee')
 
 def others(request):
+  if 'logged_in' not in request.session:
+    return redirect('/')
   request.session['other_name'] = ''
   request.session['other_address'] = ''
   request.session['other_city'] = ''
   request.session['other_state'] = ''
   request.session['other_zipcode'] = ''
   request.session['other_phone'] = ''
-  if 'logged_in' not in request.session:
-    return redirect('/')
   if request.path == '/brc/customer':
     context = {
       'all_others': Customer.objects.all().order_by('-active'),
@@ -187,6 +187,8 @@ def others(request):
       'source': 'Truck',
       'path': 'trucking',
     }
+  else:
+    context = {}
   return render(request, 'others_list.html', context)
 
 def other_add(request):
@@ -355,3 +357,156 @@ def other_inactive(request, other_id):
   else:
     return redirect('/')
   return redirect(f'/brc/{path}')
+
+def receiving(request):
+  if 'logged_in' not in request.session:
+    return redirect('/')
+  request.session['date'] = ''
+  request.session['product'] = ''
+  request.session['lot'] = ''
+  request.session['qty'] = ''
+  request.session['best_by'] = ''
+  request.session['supplier'] = ''
+  request.session['truck'] = ''
+  request.session['truck_no'] = ''
+  request.session['employee'] = ''
+  if request.path == '/brc/receiving':
+    # rcv = Receive.objects.all().order_by('receive_date')
+    # for x in rcv:
+      # print(rcv)
+      # print('xxx', x.receive_date)
+      # print('yyy', x.product.prod_name)
+      # print('zzz', x.product.lot_num)
+      # print('aaa', x.product.best_by)
+      # print('sss', x.employee.first_name)
+    context = {
+      'others': Receive.objects.all().order_by('receive_date'),
+      'source': 'Receiving',
+      'path': 'receiving',
+    }
+  else:
+    context = {}
+  return render(request, 'rcv_shp_list.html', context)
+
+def receiving_add(request):
+  if 'logged_in' not in request.session:
+      return redirect('/')
+  if request.method == "GET":
+    if request.path == '/brc/receiving/add':
+      context = {
+        'suppliers': Supplier.objects.all().exclude(active=False),
+        'trucks': Truck.objects.all().exclude(active=False),
+        'employees': Employee.objects.all().exclude(active=False),
+        'source': 'Receiving',
+        'path': 'receiving',
+        'edit': False
+      }
+    else:
+      context={}
+    return render(request, 'rcv_shp_add_edit.html', context)
+  else:
+    request.session['date'] = request.POST['date']
+    request.session['product'] = request.POST['product']
+    request.session['lot'] = request.POST['lot']
+    request.session['qty'] = request.POST['qty']
+    request.session['best_by'] = request.POST['best_by']
+    request.session['supplier'] = request.POST['supplier']
+    request.session['truck'] = request.POST['truck']
+    request.session['truck_no'] = request.POST['truck_no']
+    request.session['employee'] = request.POST['employee']
+    if '/brc/receiving/add' in request.path:
+      errors = Receive.objects.addRcValidation(request.POST)
+      if errors:
+        for key, value in errors.items():
+          messages.error(request, value)
+        return redirect('/brc/receiving/add')
+      this_product = Incoming.objects.create(
+        lot_num = request.POST['lot'],
+        prod_name = request.POST['product'],
+        best_by = request.POST['best_by'])
+      this_supplier = Supplier.objects.get(id=request.POST['supplier'])
+      this_truck = Truck.objects.get(id=request.POST['truck'])
+      this_employee = Employee.objects.get(id=request.POST['employee'])
+      Receive.objects.create(
+        receive_date = request.POST['date'],
+        product = this_product,
+        qty = request.POST['qty'],
+        supplier = this_supplier,
+        trucker = this_truck,
+        employee = this_employee)
+      return redirect('/brc/receiving')
+    else:
+      return redirect('/brc/shipping')
+
+def production(request):
+  if 'logged_in' not in request.session:
+    return redirect('/')
+  # request.session['date'] = ''
+  # request.session['product'] = ''
+  # request.session['lot'] = ''
+  # request.session['qty'] = ''
+  # request.session['best_by'] = ''
+  # request.session['supplier'] = ''
+  # request.session['truck'] = ''
+  # request.session['truck_no'] = ''
+  # request.session['employee'] = ''
+  # if request.path == '/brc/receiving':
+    # rcv = Receive.objects.all().order_by('receive_date')
+    # for x in rcv:
+      # print(rcv)
+      # print('xxx', x.receive_date)
+      # print('yyy', x.product.prod_name)
+      # print('zzz', x.product.lot_num)
+      # print('aaa', x.product.best_by)
+      # print('sss', x.employee.first_name)
+  context = {
+    'others': Production.objects.all().order_by('production_date'),
+    'add': False,
+  }
+  return render(request, 'production.html', context)
+
+def production_add(request):
+  if 'logged_in' not in request.session:
+      return redirect('/')
+  if request.method == "GET":
+    context = {
+      'iproducts': Incoming.objects.all(), # .exclude(active=False),
+      'employees': Employee.objects.all().exclude(active=False),
+      'add': True,
+    }
+    return render(request, 'production.html', context)
+  else:
+    request.session['date'] = request.POST['date']
+    request.session['product'] = request.POST['product']
+    request.session['lot'] = request.POST['lot']
+    request.session['qty'] = request.POST['qty']
+    request.session['best_by'] = request.POST['best_by']
+    request.session['supplier'] = request.POST['supplier']
+    request.session['truck'] = request.POST['truck']
+    request.session['truck_no'] = request.POST['truck_no']
+    request.session['employee'] = request.POST['employee']
+    if '/brc/receiving/add' in request.path:
+      errors = Receive.objects.addRcShValidation(request.POST)
+      if errors:
+        for key, value in errors.items():
+          messages.error(request, value)
+        return redirect('/brc/receiving/add')
+      this_product = Incoming.objects.create(
+        lot_num = request.POST['lot'],
+        prod_name = request.POST['product'],
+        best_by = request.POST['best_by'],
+        qty = request.POST['qty'])
+      this_supplier = Supplier.objects.get(id=request.POST['supplier'])
+      this_truck = Truck.objects.get(id=request.POST['truck'])
+      this_employee = Employee.objects.get(id=request.POST['employee'])
+
+      Receive.objects.create(
+        receive_date = request.POST['date'],
+        product = this_product,
+        supplier = this_supplier,
+        trucker = this_truck,
+        employee = this_employee)
+      return redirect('/brc/receiving')
+    else:
+      pass
+      return redirect('/brc/trucking')

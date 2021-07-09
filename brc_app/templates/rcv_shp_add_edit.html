@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {% if edit %}
+    <title>Edit a {{source}} Document</title>
+  {% else %}
+    <title>Add a {{source}} Document</title>
+  {% endif %}
+  {% load static %}
+  <!-- Bootstrap TAGS from (getbootstrap.com/docs) -->
+  <!-- CSS -->
+  <link href="{% static 'css\bootstrap.min.css' %}" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+  <!-- JavaScript -->
+  <script src="{% static 'js\bootstrap.bundle.min.js' %}" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+  <!-- Bootstrap TAGS -->
+</head>
+
+<body>
+  <div class="container mb-5">
+    <div class="d-flex bd-highlight">
+      <p class="p-2 flex-grow-1 bd-highlight fs-3 fw-bold mt-3">{{source}} Manager</p>
+      <p class="p-3 bd-highlight"><a href="/brc">Home</a></p>
+      <p class="p-3 flex-shrink-1 bd-highlight fw-bold">Logged in as {{request.session.first_name}}!</p>
+      <p class="p-3 flex-shrink bd-highlight"><a href="/">Log Out</a></p>
+    </div>
+    {% if edit %}
+      <h4 class="mt-3">Edit a {{source}} Document</h4>
+    {% else %}
+      <h4 class="mt-3">Add a {{source}} Document</h4>
+    {% endif %}
+    {% if messages %}
+      {% for message in messages %}
+        <p style="color: red;">{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+    {% if edit %}
+    <form action="/brc/{{path}}/edit/{{this_other.id}}" method="POST">
+    {% else %}
+    <form action="/brc/{{path}}/add" method="POST">
+    {% endif %}
+      {% csrf_token %}
+      <div class="row g-5 mb-2 mt-1">
+        <div class="col-2">
+          <label class="form-label">{{source}} Date</label>
+        </div>
+        <div class="col-auto">
+          <input type="date" class="form-control" name="date" value="{{request.session.date}}">
+        </div>
+      </div>
+      <div class="row g-5 mb-2">
+        <div class="col-2">
+          <label class="form-label">Product</label>
+        </div>
+        <div class="col-auto">
+          <input type="text" class="form-control" name="product" value="{{request.session.product}}">
+        </div>
+      </div>
+      <div class="row g-5 mb-2">
+        <div class="col-2">
+          <label class="form-label">LOT #</label>
+        </div>
+        <div class="col-auto">
+          <input type="text" class="form-control" name="lot" value="{{request.session.lot}}">
+        </div>
+      </div>
+      <div class="row g-5 mb-2">
+        <div class="col-2">
+          <label class="form-label">Quantity</label>
+        </div>
+        <div class="col-auto">
+          <input type="number" class="form-control" name="qty" value="{{request.session.qty}}">
+        </div>
+      </div>
+      <div class="row g-5 mb-2">
+        <div class="col-2">
+          <label class="form-label">Best By Date</label>
+        </div>
+        <div class="col-auto">
+          <input type="date" class="form-control" name="best_by" value="{{request.session.best_by}}">
+        </div>
+      </div>
+      <div class="row g-5 mb-2">
+        <div class="col-2">
+          <label class="form-label">Supplier</label>
+        </div>
+        <div class="col-2">
+          <select class="form-select" name="supplier">
+            <option selected value="0">Select a Supplier</option>
+            {% for supplier in suppliers %}
+              <option value="{{supplier.id}}">{{supplier.name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="row g-5 mb-2">
+        <div class="col-2">
+          <label class="form-label">Trucking Company</label>
+        </div>
+        <div class="col-2">
+          <select class="form-select" name="truck">
+            <option selected value="0">Select a Company</option>
+            {% for truck in trucks %}
+              <option value="{{truck.id}}">{{truck.name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="row g-5 mb-2">
+        <div class="col-2">
+          <label class="form-label">Truck #</label>
+        </div>
+        <div class="col-auto">
+          <input type="text" class="form-control" name="truck_no" value="{{request.session.truck_no}}">
+        </div>
+      </div>
+      <div class="row g-5 mb-2">
+        <div class="col-2">
+          <label class="form-label">Received By</label>
+        </div>
+        <div class="col-2">
+          <select class="form-select" name="employee">
+            <option selected value="0">Select Employee</option>
+            {% for employee in employees %}
+              <option value="{{employee.id}}">{{employee.first_name}} {{employee.last_name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="d-grid gap-2 col-2">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form><br>
+    <a href="/brc/{{path}}">Back to {{source}} Manager</a>
+  </div>
+</body>
+
+</html>

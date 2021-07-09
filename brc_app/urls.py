@@ -23,4 +23,9 @@ urlpatterns = [
     path('trucking/add', views.other_add),
     path('trucking/edit/<int:other_id>', views.other_edit),
     path('trucking/inactive/<int:other_id>', views.other_inactive),
+
+    path('receiving', views.receiving),
+    path('receiving/add', views.receiving_add),
+    path('production', views.production),
+    path('production/add', views.production_add),
 ]

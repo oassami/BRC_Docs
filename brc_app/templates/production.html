@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Production Dashboard</title>
+
+  {% load static %}
+  <!-- Bootstrap TAGS from (getbootstrap.com/docs) -->
+  <!-- CSS -->
+  <link href="{% static 'css\bootstrap.min.css' %}" rel="stylesheet"
+    integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+  <!-- JavaScript -->
+  <script src="{% static 'js\bootstrap.bundle.min.js' %}"
+    integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+    crossorigin="anonymous"></script>
+  <!-- Bootstrap TAGS -->
+
+</head>
+
+<body>
+  <div class="container mb-5">
+    {% if add %}
+    <div class="d-flex bd-highlight">
+      <p class="p-2 flex-grow-1 bd-highlight fs-5 fw-bold mt-5">Production Manager</p>
+      <p class="p-3 bd-highlight"><a href="/brc">Home</a></p>
+      <p class="p-3 flex-shrink-1 bd-highlight fw-bold">Loggen in as {{request.session.first_name}}!</p>
+      <p class="p-3 flex-shrink bd-highlight"><a href="/">Logout</a></p>
+    </div>
+    {% if messages %}
+    {% for message in messages %}
+    <p style="color: red;">{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+    <h5 class="mt-3">Add a Production Entry</h4>
+      <form action="/brc/production/add" method="POST">
+        {% csrf_token %}
+        <div class="row g-5 mb-4 mt-1">
+          <div class="col-2">
+            <label class="form-label fw-bold">Production Date</label>
+          </div>
+          <div class="col-auto">
+            <input type="date" class="form-control" name="date" value="{{request.session.date}}">
+          </div>
+        </div>
+        <div class="row g-5 mb-2">
+          <div class="col-md-2">
+            <label class="form-label fw-bold">Incoming Product</label>
+            <select class="form-select" name="lot">
+              <option selected value="0">Select a LOT #</option>
+              {% for iproduct in iproducts %}
+              <option value="{{iproduct.id}}">{{iproduct.lot_num}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label fw-bold">Product Name</label>
+            <input type="text" class="form-control" name="lot" value="{{request.session.lot}}">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label fw-bold">Quantity</label>
+            <input type="number" class="form-control" name="qty" value="{{request.session.qty}}">
+          </div>
+        </div>
+        <div class="row g-5 mb-2">
+          <div class="col-md-2">
+            <select class="form-select" name="lot">
+              <option selected value="0">Select a LOT #</option>
+              {% for iproduct in iproducts %}
+              <option value="{{iproduct.id}}">{{iproduct.lot_num}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-2">
+            <input type="text" class="form-control" name="lot" value="{{request.session.lot}}">
+          </div>
+          <div class="col-md-2 mb-4">
+            <input type="number" class="form-control" name="qty" value="{{request.session.qty}}">
+          </div>
+        </div>
+        <div class="row g-5 mb-2">
+          <div class="col-2">
+            <label class="form-label">Supplier</label>
+          </div>
+          <div class="col-2">
+            <select class="form-select" name="supplier">
+              <option selected value="0">Select a Supplier</option>
+              {% for supplier in suppliers %}
+              <option value="{{supplier.id}}">{{supplier.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="row g-5 mb-2">
+          <div class="col-2">
+            <label class="form-label">Trucking Company</label>
+          </div>
+          <div class="col-2">
+            <select class="form-select" name="truck">
+              <option selected value="0">Select a Company</option>
+              {% for truck in trucks %}
+              <option value="{{truck.id}}">{{truck.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="row g-5 mb-2">
+          <div class="col-2">
+            <label class="form-label">Truck #</label>
+          </div>
+          <div class="col-auto">
+            <input type="text" class="form-control" name="truck_no" value="{{request.session.truck_no}}">
+          </div>
+        </div>
+        <div class="row g-5 mb-2">
+          <div class="col-2">
+            <label class="form-label">Received By</label>
+          </div>
+          <div class="col-2">
+            <select class="form-select" name="employee">
+              <option selected value="0">Select Employee</option>
+              {% for employee in employees %}
+              <option value="{{employee.id}}">{{employee.first_name}} {{employee.last_name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="d-grid gap-2 col-2">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form><br>
+      <a href="/brc/production">Back to Production Manager</a>
+      {% else %}
+      <div class="d-flex bd-highlight">
+        <p class="p-2 flex-grow-1 bd-highlight fs-5 fw-bold mt-5">Production Manager<a href="/brc/production/add"
+            class="btn btn-success ms-5" role="button">Add New Production Entry</a></p>
+        <p class="p-3 bd-highlight"><a href="/brc">Home</a></p>
+        <p class="p-3 flex-shrink-1 bd-highlight fw-bold">Loggen in as {{request.session.first_name}}!</p>
+        <p class="p-3 flex-shrink bd-highlight"><a href="/">Logout</a></p>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Finished Product</th>
+            <th scope="col">LOT #</th>
+            <th scope="col">Best By</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for other in others %}
+          <tr>
+            <td>{{other.receive_date|date:"m/d/Y"}}</td>
+            <td>{{other.product.prod_name}}</td>
+            <td>{{other.product.lot_num}}</td>
+            <td>{{other.product.best_by|date:"m/d/Y"}}</td>
+            <td>
+              <a href="/brc/production/edit/{{other.id}}" class="btn btn-primary" role="button">Edit</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+  </div>
+</body>
+
+</html>
