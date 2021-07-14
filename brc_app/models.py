@@ -93,10 +93,10 @@ class InfoManager(models.Manager):
     if post_data['employee'] == '0':
       errors['employee'] = 'Must select an Employee.'
     try:
-      Incoming.objects.get(lot_num=post_data['lot'])
+      Product.objects.get(lot_num=post_data['lot'])
       errors['lot'] = "This Lot Number already exists!"
     except:
-      print('ERRORRRR!')
+      pass
     return errors
 
   def addShValidation(self, post_data):
@@ -120,10 +120,45 @@ class InfoManager(models.Manager):
     if post_data['employee'] == '0':
       errors['employee'] = 'Must select an Employee.'
     try:
-      Finished.objects.get(lot_num=post_data['lot'])
+      Product.objects.get(lot_num=post_data['lot'])
       errors['lot'] = "This Lot Number already exists!"
     except:
-      print('ERRORRRR!')
+      pass
+    return errors
+
+  def addProValidation(self, post_data):
+    errors={}
+    if not post_data['pdate']:
+      errors['pdate'] = 'Invalid Production Date...'
+    if post_data['ilot1'] == '0':
+      errors['ilot1'] = 'Must select an Incoming Product LOT #.'
+    if not post_data['iqty1']:
+      errors['iqty1'] = 'Incoming Product Quantity connot be less than 1.'
+    if not post_data['flot']:
+      errors['flot'] = 'Must select a Finished LOT #.'
+    if len(post_data['fname']) < 2:
+      errors['fname'] = 'Finished Product must be at least 2 characters.'
+    if not post_data['fqty']:
+      errors['fqty'] = 'Finished Product Quantity connot be less than 1.'
+    if not post_data['fbbdate']:
+      errors['fbbdate'] = 'Invalid Best By Date...'
+    if post_data['pemp1'] == '0' or post_data['pemp2'] == '0' or post_data['pemp1'] == '0'  or post_data['pemp4'] == '0' or post_data['pemp5'] == '0' or post_data['pemp6'] == '0' or post_data['pemp7'] == '0' or post_data['pemp8'] == '0' or post_data['pemp9'] == '0':
+      errors['pemp'] = 'Must select all Poduction Employee (or NONE).'
+    if len(post_data['liner']) < 2:
+      errors['liner'] = 'Liner LOT # must be at least 2 characters.'
+    if len(post_data['tubs']) < 2:
+      errors['tubs'] = 'Tubs LOT # must be at least 2 characters.'
+    if len(post_data['lids']) < 2:
+      errors['lids'] = 'Lids LOT # must be at least 2 characters.'
+    if post_data['remployee'] == '0':
+      errors['remployee'] = 'Must select Release Employee.'
+    if not post_data['rdate']:
+      errors['rdate'] = 'Invalid Release Date...'
+    try:
+      Product.objects.get(lot_num=post_data['flot'])
+      errors['flot'] = "Finished Product Lot # already exists!"
+    except:
+      pass
     return errors
 
 class Employee(models.Model):
@@ -172,23 +207,17 @@ class Truck(models.Model):
   updated_at = models.DateTimeField(auto_now=True)
   objects = InfoManager()
 
-class Incoming(models.Model):
+class Product(models.Model):
   lot_num = models.CharField(max_length=55)
   prod_name = models.CharField(max_length=55)
   best_by = models.DateField()
-  created_at = models.DateTimeField(auto_now_add=True)
-  updated_at = models.DateTimeField(auto_now=True)
-
-class Finished(models.Model):
-  lot_num = models.CharField(max_length=55)
-  prod_name = models.CharField(max_length=55)
-  best_by = models.DateField()
+  type = models.CharField(max_length=1) # "I" for Incoming, "F" for Finished
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
 
 class Receive(models.Model):
   receive_date = models.DateField()
-  product = models.ForeignKey(Incoming, related_name='received_product', on_delete=models.CASCADE)
+  product = models.ForeignKey(Product, related_name='received_product', on_delete=models.CASCADE)
   qty = models.IntegerField()
   supplier = models.ForeignKey(Supplier, related_name='suppliers', on_delete=models.CASCADE)
   trucker = models.ForeignKey(Truck, related_name='received_truckers', on_delete=models.CASCADE)
@@ -199,7 +228,7 @@ class Receive(models.Model):
 
 class Ship(models.Model):
   ship_date = models.DateField()
-  product = models.ForeignKey(Incoming, related_name='shipped_product', on_delete=models.CASCADE)
+  product = models.ForeignKey(Product, related_name='shipped_product', on_delete=models.CASCADE)
   qty = models.IntegerField()
   customer = models.ForeignKey(Supplier, related_name='customers', on_delete=models.CASCADE)
   trucker = models.ForeignKey(Truck, related_name='shipped_truckers', on_delete=models.CASCADE)
@@ -210,17 +239,27 @@ class Ship(models.Model):
 
 class Production(models.Model):
   production_date = models.DateField()
-  incoming1 = models.ForeignKey(Incoming, related_name='received_product1', on_delete=models.CASCADE)
-  incoming1_qty = models.IntegerField()
-  incoming2 = models.ForeignKey(Incoming, related_name='received_product2', on_delete=models.CASCADE)
-  incoming2_qty = models.IntegerField()
-  finished = models.ForeignKey(Finished, related_name='shinished_product', on_delete=models.CASCADE)
-  finished_qty = models.IntegerField()
-  employee = models.ManyToManyField(Employee, related_name='production_by')
+  products = models.ManyToManyField(Product, related_name='incoming_products')
+  employees = models.ManyToManyField(Employee, related_name='employees_procduction')
   liner = models.CharField(max_length=55)
   tubs = models.CharField(max_length=55)
   lids = models.CharField(max_length=55)
-  released_by = models.ForeignKey(User, related_name='productions', on_delete=models.CASCADE)
+  released_by = models.ForeignKey(Employee, related_name='productions', on_delete=models.CASCADE)
+  released_date = models.DateField()
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
   objects = InfoManager()
+
+class ProdProduct(models.Model):
+  productions = models.ForeignKey(Production, on_delete=models.CASCADE)
+  products = models.ForeignKey(Product, on_delete=models.CASCADE)
+  qtys = models.IntegerField()
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)
+
+class ProdEmployee(models.Model):
+  productions = models.ForeignKey(Production, on_delete=models.CASCADE)
+  employees = models.ForeignKey(Employee, on_delete=models.CASCADE)
+  locations = models.CharField(max_length=10)
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)

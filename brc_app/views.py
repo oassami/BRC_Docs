@@ -420,10 +420,11 @@ def receiving_add(request):
         for key, value in errors.items():
           messages.error(request, value)
         return redirect('/brc/receiving/add')
-      this_product = Incoming.objects.create(
+      this_product = Product.objects.create(
         lot_num = request.POST['lot'],
         prod_name = request.POST['product'],
-        best_by = request.POST['best_by'])
+        best_by = request.POST['best_by'],
+        type = "I")
       this_supplier = Supplier.objects.get(id=request.POST['supplier'])
       this_truck = Truck.objects.get(id=request.POST['truck'])
       this_employee = Employee.objects.get(id=request.POST['employee'])
@@ -441,24 +442,31 @@ def receiving_add(request):
 def production(request):
   if 'logged_in' not in request.session:
     return redirect('/')
-  # request.session['date'] = ''
-  # request.session['product'] = ''
-  # request.session['lot'] = ''
-  # request.session['qty'] = ''
-  # request.session['best_by'] = ''
-  # request.session['supplier'] = ''
-  # request.session['truck'] = ''
-  # request.session['truck_no'] = ''
-  # request.session['employee'] = ''
-  # if request.path == '/brc/receiving':
-    # rcv = Receive.objects.all().order_by('receive_date')
-    # for x in rcv:
-      # print(rcv)
-      # print('xxx', x.receive_date)
-      # print('yyy', x.product.prod_name)
-      # print('zzz', x.product.lot_num)
-      # print('aaa', x.product.best_by)
-      # print('sss', x.employee.first_name)
+  request.session['pdate'] = ''
+  request.session['ilot1'] = ''
+  request.session['iname1'] = ''
+  request.session['iqty1'] = ''
+  request.session['ilot2'] = ''
+  request.session['iname2'] = ''
+  request.session['iqty2'] = ''
+  request.session['flot'] =''
+  request.session['fname'] =''
+  request.session['fqty'] = ''
+  request.session['fbbdate'] = ''
+  request.session['pemp1'] = ''
+  request.session['pemp2'] = ''
+  request.session['pemp3'] = ''
+  request.session['pemp4'] = ''
+  request.session['pemp5'] = ''
+  request.session['pemp6'] = ''
+  request.session['pemp7'] = ''
+  request.session['pemp8'] = ''
+  request.session['pemp9'] = ''
+  request.session['liner'] = ''
+  request.session['tubs'] = ''
+  request.session['lids'] = ''
+  request.session['remployee'] = ''
+  request.session['rdate'] = ''
   context = {
     'others': Production.objects.all().order_by('production_date'),
     'add': False,
@@ -470,43 +478,76 @@ def production_add(request):
       return redirect('/')
   if request.method == "GET":
     context = {
-      'iproducts': Incoming.objects.all(), # .exclude(active=False),
+      'ilots': Product.objects.filter(type="I"), # .exclude(active=False),
       'employees': Employee.objects.all().exclude(active=False),
       'add': True,
     }
     return render(request, 'production.html', context)
   else:
-    request.session['date'] = request.POST['date']
-    request.session['product'] = request.POST['product']
-    request.session['lot'] = request.POST['lot']
-    request.session['qty'] = request.POST['qty']
-    request.session['best_by'] = request.POST['best_by']
-    request.session['supplier'] = request.POST['supplier']
-    request.session['truck'] = request.POST['truck']
-    request.session['truck_no'] = request.POST['truck_no']
-    request.session['employee'] = request.POST['employee']
-    if '/brc/receiving/add' in request.path:
-      errors = Receive.objects.addRcShValidation(request.POST)
-      if errors:
-        for key, value in errors.items():
-          messages.error(request, value)
-        return redirect('/brc/receiving/add')
-      this_product = Incoming.objects.create(
-        lot_num = request.POST['lot'],
-        prod_name = request.POST['product'],
-        best_by = request.POST['best_by'],
-        qty = request.POST['qty'])
-      this_supplier = Supplier.objects.get(id=request.POST['supplier'])
-      this_truck = Truck.objects.get(id=request.POST['truck'])
-      this_employee = Employee.objects.get(id=request.POST['employee'])
-
-      Receive.objects.create(
-        receive_date = request.POST['date'],
-        product = this_product,
-        supplier = this_supplier,
-        trucker = this_truck,
-        employee = this_employee)
-      return redirect('/brc/receiving')
-    else:
-      pass
-      return redirect('/brc/trucking')
+    request.session['pdate'] = request.POST['pdate']
+    request.session['ilot1'] = request.POST['ilot1']
+    request.session['iname1'] = request.POST['iname1']
+    request.session['iqty1'] = request.POST['iqty1']
+    request.session['ilot2'] = request.POST['ilot2']
+    request.session['iname2'] = request.POST['iname2']
+    request.session['iqty2'] = request.POST['iqty2']
+    request.session['flot'] = request.POST['flot']
+    request.session['fname'] = request.POST['fname']
+    request.session['fqty'] = request.POST['fqty']
+    request.session['fbbdate'] = request.POST['fbbdate']
+    request.session['pemp1'] = request.POST['pemp1']
+    request.session['pemp2'] = request.POST['pemp2']
+    request.session['pemp3'] = request.POST['pemp3']
+    request.session['pemp4'] = request.POST['pemp4']
+    request.session['pemp5'] = request.POST['pemp5']
+    request.session['pemp6'] = request.POST['pemp6']
+    request.session['pemp7'] = request.POST['pemp7']
+    request.session['pemp8'] = request.POST['pemp8']
+    request.session['pemp9'] = request.POST['pemp9']
+    request.session['liner'] = request.POST['liner']
+    request.session['tubs'] = request.POST['tubs']
+    request.session['lids'] = request.POST['lids']
+    request.session['remployee'] = request.POST['remployee']
+    request.session['rdate'] = request.POST['rdate']
+    # if '/brc/receiving/add' in request.path:
+    errors = Production.objects.addProValidation(request.POST)
+    if errors:
+      for key, value in errors.items():
+        messages.error(request, value)
+      return redirect('/brc/production/add')
+    fproduct = Product.objects.create(
+      lot_num = request.POST['flot'],
+      prod_name = request.POST['fname'],
+      best_by = request.POST['fbbdate'],
+      type = "F")
+    this_production = Production.objects.create(
+      production_date = request.POST['pdate'],
+      liner = request.POST['liner'],
+      tubs = request.POST['tubs'],
+      lids = request.POST['lids'],
+      released_by = Employee.objects.get(id=request.POST['remployee']),
+      released_date = request.POST['rdate'])
+    this_product = Product.objects.get(id=request.POST['ilot1'])
+    this_production.products.add(this_product)
+    ProdProduct.objects.create(
+      productions = this_production,
+      products = this_product,
+      qtys = request.POST['iqty1'])
+    if request.POST['ilot2'] != '9999' and request.POST['ilot2'] != '0':
+      this_product = Product.objects.get(id=request.POST['ilot2'])
+      this_production.products.add(this_product)
+      ProdProduct.objects.create(
+        productions = this_production,
+        products = this_product,
+        qtys = request.POST['iqty2'])
+    prod_locations = ['Push-In/Collect', 'Case/Cardboard', 'Box Open/Dumper', 'Metal Detector', 'Taping', 'Labeling', 'Sort Conveyor', 'Sort Conveyor', 'Sort Conveyor']
+    for i in range(1, 9+1):
+      # print(request.POST[f'pemp{i}'])
+      if request.POST[f'pemp{i}'] != '9999':
+        this_employee = Employee.objects.get(id=request.POST[f'pemp{i}'])
+        this_production.employees.add(this_employee)
+        ProdEmployee.objects.create(
+          productions = this_production,
+          employees = this_employee,
+          locations = prod_locations[i-1])
+    return redirect('/brc/production')

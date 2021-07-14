@@ -10,11 +10,6 @@ def index(request):
     request.session['register'] = True
   return render(request, 'login.html')
 
-# def register(request):
-#   if 'logged_in' in request.session:
-#     request.session.clear()
-#   return render(request, 'register.html')
-
 def user_login(request):
   request.session.clear()
   request.session['email'] = request.POST['email']
