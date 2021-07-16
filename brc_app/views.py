@@ -467,8 +467,23 @@ def production(request):
   request.session['lids'] = ''
   request.session['remployee'] = ''
   request.session['rdate'] = ''
+  productions = Production.objects.all().order_by('production_date')
+  products = ProdProduct.objects.all()
+  # for prod in products:
+    # print(prod.incoong)
+  
+  for production in productions:
+    print(production.products.all())
+    for product in products.filter(type='F'):
+      print('y')
+      # fid = production_product.id
+      print(product.prod_name)
+      print(product.lot_num)
+      print(product.type)
+
   context = {
-    'others': Production.objects.all().order_by('production_date'),
+    'productions': productions,
+    'products': production.incoming_products.all(),
     'add': False,
   }
   return render(request, 'production.html', context)
@@ -527,18 +542,23 @@ def production_add(request):
       lids = request.POST['lids'],
       released_by = Employee.objects.get(id=request.POST['remployee']),
       released_date = request.POST['rdate'])
-    this_product = Product.objects.get(id=request.POST['ilot1'])
-    this_production.products.add(this_product)
+    iproduct = Product.objects.get(id=request.POST['ilot1'])
+    this_production.products.add(iproduct)
+    this_production.products.add(fproduct)
     ProdProduct.objects.create(
       productions = this_production,
-      products = this_product,
+      products = iproduct,
       qtys = request.POST['iqty1'])
+    ProdProduct.objects.create(
+      productions = this_production,
+      products = fproduct,
+      qtys = request.POST['fqty'])
     if request.POST['ilot2'] != '9999' and request.POST['ilot2'] != '0':
-      this_product = Product.objects.get(id=request.POST['ilot2'])
-      this_production.products.add(this_product)
+      iproduct = Product.objects.get(id=request.POST['ilot2'])
+      this_production.products.add(iproduct)
       ProdProduct.objects.create(
         productions = this_production,
-        products = this_product,
+        products = iproduct,
         qtys = request.POST['iqty2'])
     prod_locations = ['Push-In/Collect', 'Case/Cardboard', 'Box Open/Dumper', 'Metal Detector', 'Taping', 'Labeling', 'Sort Conveyor', 'Sort Conveyor', 'Sort Conveyor']
     for i in range(1, 9+1):

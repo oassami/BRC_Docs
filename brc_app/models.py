@@ -142,7 +142,7 @@ class InfoManager(models.Manager):
       errors['fqty'] = 'Finished Product Quantity connot be less than 1.'
     if not post_data['fbbdate']:
       errors['fbbdate'] = 'Invalid Best By Date...'
-    if post_data['pemp1'] == '0' or post_data['pemp2'] == '0' or post_data['pemp1'] == '0'  or post_data['pemp4'] == '0' or post_data['pemp5'] == '0' or post_data['pemp6'] == '0' or post_data['pemp7'] == '0' or post_data['pemp8'] == '0' or post_data['pemp9'] == '0':
+    if post_data['pemp1'] == '0' or post_data['pemp2'] == '0' or post_data['pemp3'] == '0'  or post_data['pemp4'] == '0' or post_data['pemp5'] == '0' or post_data['pemp6'] == '0' or post_data['pemp7'] == '0' or post_data['pemp8'] == '0' or post_data['pemp9'] == '0':
       errors['pemp'] = 'Must select all Poduction Employee (or NONE).'
     if len(post_data['liner']) < 2:
       errors['liner'] = 'Liner LOT # must be at least 2 characters.'

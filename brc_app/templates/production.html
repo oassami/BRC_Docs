@@ -111,7 +111,7 @@
               <div class="input-group">
                 <label class="input-group-text col-6">Push-In/Collect</label>
                 <select class="form-select" name="pemp1">
-                  <option selected>Select</option>
+                  <option selected value="0">Select</option>
                   <option value="9999">NO-ONE</option>
                   {% for employee in employees %}
                   <option value="{{employee.id}}">{{employee.first_name}}</option>
@@ -123,7 +123,7 @@
               <div class="input-group">
                 <label class="input-group-text col-6">Case/Cardboard</label>
                 <select class="form-select" name="pemp2">
-                  <option selected>Select</option>
+                  <option selected value="0">Select</option>
                   <option value="9999">NO-ONE</option>
                   {% for employee in employees %}
                   <option value="{{employee.id}}">{{employee.first_name}}</option>
@@ -135,7 +135,7 @@
               <div class="input-group">
                 <label class="input-group-text col-6">Box Open/Dumper</label>
                 <select class="form-select" name="pemp3">
-                  <option selected>Select</option>
+                  <option selected value="0">Select</option>
                   <option value="9999">NO-ONE</option>
                   {% for employee in employees %}
                   <option value="{{employee.id}}">{{employee.first_name}}</option>
@@ -149,7 +149,7 @@
               <div class="input-group">
                 <label class="input-group-text col-6">Metal Detector</label>
                 <select class="form-select" name="pemp4">
-                  <option selected>Select</option>
+                  <option selected value="0">Select</option>
                   <option value="9999">NO-ONE</option>
                   {% for employee in employees %}
                   <option value="{{employee.id}}">{{employee.first_name}}</option>
@@ -161,7 +161,7 @@
               <div class="input-group">
                 <label class="input-group-text col-6">Taping</label>
                 <select class="form-select"  name="pemp5">
-                  <option selected>Select</option>
+                  <option selected value="0">Select</option>
                   <option value="9999">NO-ONE</option>
                   {% for employee in employees %}
                   <option value="{{employee.id}}">{{employee.first_name}}</option>
@@ -173,7 +173,7 @@
               <div class="input-group">
                 <label class="input-group-text col-6">Labeling</label>
                 <select class="form-select" name="pemp6">
-                  <option selected>Select</option>
+                  <option selected value="0">Select</option>
                   <option value="9999">NO-ONE</option>
                   {% for employee in employees %}
                   <option value="{{employee.id}}">{{employee.first_name}}</option>
@@ -187,7 +187,7 @@
               <div class="input-group">
                 <label class="input-group-text col-6">Sort Conveyor</label>
                 <select class="form-select" name="pemp7">
-                  <option selected>Select</option>
+                  <option selected value="0">Select</option>
                   <option value="9999">NO-ONE</option>
                   {% for employee in employees %}
                   <option value="{{employee.id}}">{{employee.first_name}}</option>
@@ -199,7 +199,7 @@
               <div class="input-group">
                 <label class="input-group-text col-6">Sort Conveyor</label>
                 <select class="form-select" name="pemp8">
-                  <option selected>Select</option>
+                  <option selected value="0">Select</option>
                   <option value="9999">NO-ONE</option>
                   {% for employee in employees %}
                   <option value="{{employee.id}}">{{employee.first_name}}</option>
@@ -211,7 +211,7 @@
               <div class="input-group">
                 <label class="input-group-text col-6">Sort Conveyor</label>
                 <select class="form-select" name="pemp9">
-                  <option selected>Select</option>
+                  <option selected value="0">Select</option>
                   <option value="9999">NO-ONE</option>
                   {% for employee in employees %}
                   <option value="{{employee.id}}">{{employee.first_name}}</option>
@@ -290,15 +290,15 @@
           </tr>
         </thead>
         <tbody>
-          {% for other in others %}
+          {% for production in productions %}
           <tr>
-            <td>{{other.production_date|date:"m/d/Y"}}</td>
-            <td>{{other.products.prod_name}}</td>
-            <td>{{other.products.lot_num}}</td>
-            <td>{{other.products.best_by|date:"m/d/Y"}}</td>
-            <td>
-              <a href="/brc/production/edit/{{other.id}}" class="btn btn-primary" role="button">Edit</a>
-            </td>
+            <td>{{production.production_date|date:"m/d/Y"}}</td>
+            {% for product in production.products.filter(type='F') %}
+              <td>{{product.prod_name}}</td>
+              <td>{{product.lot_num}}</td>
+              <td>{{product.best_by|date:"m/d/Y"}}</td>
+            {% endfor %}
+            <td><a href="/brc/production/edit/{{other.id}}" class="btn btn-primary" role="button">Edit</a></td>
           </tr>
           {% endfor %}
         </tbody>
