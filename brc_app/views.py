@@ -467,23 +467,30 @@ def production(request):
   request.session['lids'] = ''
   request.session['remployee'] = ''
   request.session['rdate'] = ''
-  productions = Production.objects.all().order_by('production_date')
-  products = ProdProduct.objects.all()
+  productions = Production.objects.order_by('production_date')
+  products = Product.objects.filter(type='F')
+  prod_products = Product.objects.filter(type='F')
   # for prod in products:
     # print(prod.incoong)
   
-  for production in productions:
-    print(production.products.all())
-    for product in products.filter(type='F'):
-      print('y')
+  for product in productions:
+    # products = production.prodproduct_set.all()
+    print(product.production_date)
+    x = product.prodproduct_set.filter(production_id=product.id)
+    # y = x.filter(production_id=product.id)
+    # for y in x:
+    print(x)
+    # print(production.products.prod_name)
+    # for product in products:
+      # print(prod_product.products.get(id =))
       # fid = production_product.id
-      print(product.prod_name)
-      print(product.lot_num)
-      print(product.type)
+      # print(product)
+      # print(product.lot_num)
+      # print(product.type)
 
   context = {
     'productions': productions,
-    'products': production.incoming_products.all(),
+    'products': Product.objects.all(),
     'add': False,
   }
   return render(request, 'production.html', context)
@@ -537,37 +544,36 @@ def production_add(request):
       type = "F")
     this_production = Production.objects.create(
       production_date = request.POST['pdate'],
-      liner = request.POST['liner'],
-      tubs = request.POST['tubs'],
-      lids = request.POST['lids'],
+      created_by = User.objects.get(id=request.session['user_id']),
+      liner_lot = request.POST['liner'],
+      tubs_lot = request.POST['tubs'],
+      lids_lot = request.POST['lids'],
       released_by = Employee.objects.get(id=request.POST['remployee']),
       released_date = request.POST['rdate'])
     iproduct = Product.objects.get(id=request.POST['ilot1'])
-    this_production.products.add(iproduct)
-    this_production.products.add(fproduct)
     ProdProduct.objects.create(
-      productions = this_production,
-      products = iproduct,
-      qtys = request.POST['iqty1'])
+      production = this_production,
+      product = iproduct,
+      quantity = request.POST['iqty1'])
     ProdProduct.objects.create(
-      productions = this_production,
-      products = fproduct,
-      qtys = request.POST['fqty'])
+      production = this_production,
+      product = fproduct,
+      quantity = request.POST['fqty'])
     if request.POST['ilot2'] != '9999' and request.POST['ilot2'] != '0':
       iproduct = Product.objects.get(id=request.POST['ilot2'])
-      this_production.products.add(iproduct)
+      # this_production.products.add(iproduct)
       ProdProduct.objects.create(
-        productions = this_production,
-        products = iproduct,
-        qtys = request.POST['iqty2'])
+        production = this_production,
+        product = iproduct,
+        quantity = request.POST['iqty2'])
     prod_locations = ['Push-In/Collect', 'Case/Cardboard', 'Box Open/Dumper', 'Metal Detector', 'Taping', 'Labeling', 'Sort Conveyor', 'Sort Conveyor', 'Sort Conveyor']
     for i in range(1, 9+1):
       # print(request.POST[f'pemp{i}'])
       if request.POST[f'pemp{i}'] != '9999':
         this_employee = Employee.objects.get(id=request.POST[f'pemp{i}'])
-        this_production.employees.add(this_employee)
+        # this_production.employees.add(this_employee)
         ProdEmployee.objects.create(
-          productions = this_production,
-          employees = this_employee,
-          locations = prod_locations[i-1])
+          production = this_production,
+          employee = this_employee,
+          location = prod_locations[i-1])
     return redirect('/brc/production')

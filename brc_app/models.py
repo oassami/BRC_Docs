@@ -183,6 +183,14 @@ class Customer(models.Model):
   updated_at = models.DateTimeField(auto_now=True)
   objects = InfoManager()
 
+class Product(models.Model):
+  lot_num = models.CharField(max_length=55)
+  prod_name = models.CharField(max_length=55)
+  best_by = models.DateField()
+  type = models.CharField(max_length=1) # "I" for Incoming, "F" for Finished
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)
+
 class Supplier(models.Model):
   name = models.CharField(max_length=55)
   address = models.CharField(max_length=55)
@@ -206,14 +214,6 @@ class Truck(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
   objects = InfoManager()
-
-class Product(models.Model):
-  lot_num = models.CharField(max_length=55)
-  prod_name = models.CharField(max_length=55)
-  best_by = models.DateField()
-  type = models.CharField(max_length=1) # "I" for Incoming, "F" for Finished
-  created_at = models.DateTimeField(auto_now_add=True)
-  updated_at = models.DateTimeField(auto_now=True)
 
 class Receive(models.Model):
   receive_date = models.DateField()
@@ -239,11 +239,10 @@ class Ship(models.Model):
 
 class Production(models.Model):
   production_date = models.DateField()
-  products = models.ManyToManyField(Product, related_name='incoming_products')
-  employees = models.ManyToManyField(Employee, related_name='employees_procduction')
-  liner = models.CharField(max_length=55)
-  tubs = models.CharField(max_length=55)
-  lids = models.CharField(max_length=55)
+  created_by = models.ForeignKey(User, related_name='procductions_user', on_delete=models.CASCADE)
+  liner_lot = models.CharField(max_length=55)
+  tubs_lot = models.CharField(max_length=55)
+  lids_lot = models.CharField(max_length=55)
   released_by = models.ForeignKey(Employee, related_name='productions', on_delete=models.CASCADE)
   released_date = models.DateField()
   created_at = models.DateTimeField(auto_now_add=True)
@@ -251,15 +250,15 @@ class Production(models.Model):
   objects = InfoManager()
 
 class ProdProduct(models.Model):
-  productions = models.ForeignKey(Production, on_delete=models.CASCADE)
-  products = models.ForeignKey(Product, on_delete=models.CASCADE)
-  qtys = models.IntegerField()
+  production = models.ForeignKey(Production, on_delete=models.CASCADE)
+  product = models.ForeignKey(Product, on_delete=models.CASCADE)
+  quantity = models.IntegerField()
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
 
 class ProdEmployee(models.Model):
-  productions = models.ForeignKey(Production, on_delete=models.CASCADE)
-  employees = models.ForeignKey(Employee, on_delete=models.CASCADE)
-  locations = models.CharField(max_length=10)
+  production = models.ForeignKey(Production, on_delete=models.CASCADE)
+  employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+  location = models.CharField(max_length=10)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)

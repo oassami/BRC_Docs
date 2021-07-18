@@ -99,7 +99,7 @@
             <input type="number" class="form-control" name="fqty" value="{{request.session.qty}}">
           </div>
           <div class="col-md-2">
-            <label class="form-label fw-bold">Besy By</label>
+            <label class="form-label fw-bold">Best By</label>
             <input type="date" class="form-control" name="fbbdate" value="{{request.session.qty}}">
           </div>
         </div>
@@ -293,7 +293,7 @@
           {% for production in productions %}
           <tr>
             <td>{{production.production_date|date:"m/d/Y"}}</td>
-            {% for product in production.products.filter(type='F') %}
+            {% for product in products %}
               <td>{{product.prod_name}}</td>
               <td>{{product.lot_num}}</td>
               <td>{{product.best_by|date:"m/d/Y"}}</td>
