@@ -84,8 +84,8 @@ class InfoManager(models.Manager):
       errors['qty'] = 'Quantity connot be less than 1.'
     if not post_data['best_by']:
       errors['best_by'] = 'Invalid Best By date...'
-    if post_data['supplier'] == '0':
-      errors['supplier'] = 'Must select a Supplier.'
+    if post_data['supp_cust'] == '0':
+      errors['supp_cust'] = 'Must select a Supplier.'
     if post_data['truck'] == '0':
       errors['truck'] = 'Must select a Trucking Company.'
     if len(post_data['truck_no']) < 2:
@@ -103,27 +103,27 @@ class InfoManager(models.Manager):
     errors={}
     if not post_data['date']:
       errors['date'] = 'Invalid date...'
-    if len(post_data['product']) < 2:
-      errors['product'] = 'Product must be at least 2 characters.'
-    if len(post_data['lot']) < 2:
-      errors['lot'] = 'Lot Number must be at least 2 characters.'
+    # if len(post_data['product']) < 2:
+      # errors['product'] = 'Product must be at least 2 characters.'
+    if post_data['lot'] == '0':
+      errors['lot'] = 'Must select a LOT Number'
     if not post_data['qty']:
       errors['qty'] = 'Quantity connot be less than 1.'
-    if not post_data['best_by']:
-      errors['best_by'] = 'Invalid Best By date...'
-    if post_data['supplier'] == '0':
-      errors['supplier'] = 'Must select a Supplier.'
+    # if not post_data['best_by']:
+    #   errors['best_by'] = 'Invalid Best By date...'
+    if post_data['supp_cust'] == '0':
+      errors['supp_cust'] = 'Must select a Customer.'
     if post_data['truck'] == '0':
       errors['truck'] = 'Must select a Trucking Company.'
     if len(post_data['truck_no']) < 2:
       errors['truck_no'] = 'Truck Number must be at least 2 characters.'
     if post_data['employee'] == '0':
       errors['employee'] = 'Must select an Employee.'
-    try:
-      Product.objects.get(lot_num=post_data['lot'])
-      errors['lot'] = "This Lot Number already exists!"
-    except:
-      pass
+    # try:
+    #   Product.objects.get(lot_num=post_data['lot'])
+    #   errors['lot'] = "This Lot Number already exists!"
+    # except:
+    #   pass
     return errors
 
   def addProValidation(self, post_data):
@@ -230,7 +230,7 @@ class Ship(models.Model):
   ship_date = models.DateField()
   product = models.ForeignKey(Product, related_name='shipped_product', on_delete=models.CASCADE)
   qty = models.IntegerField()
-  customer = models.ForeignKey(Supplier, related_name='customers', on_delete=models.CASCADE)
+  customer = models.ForeignKey(Customer, related_name='customers', on_delete=models.CASCADE)
   trucker = models.ForeignKey(Truck, related_name='shipped_truckers', on_delete=models.CASCADE)
   employee = models.ForeignKey(Employee, related_name='shipped_by', on_delete=models.CASCADE)
   created_at = models.DateTimeField(auto_now_add=True)

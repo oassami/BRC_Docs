@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'login_app',
     'brc_app',
+    'report_app',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

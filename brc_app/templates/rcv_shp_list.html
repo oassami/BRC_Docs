@@ -33,14 +33,22 @@
           <th scope="col">Product</th>
           <th scope="col">LOT #</th>
           <th scope="col">Best By</th>
+          {% if path == 'receiving' %}
           <th scope="col">Received By</th>
+          {% else %}
+          <th scope="col">Shipped By</th>
+          {% endif %}
           <th scope="col">Action</th>
         </tr>
       </thead>
       <tbody>
         {% for other in others %}
         <tr>
+          {% if path == 'receiving' %}
           <td>{{other.receive_date|date:"m/d/Y"}}</td>
+          {% else %}
+          <td>{{other.ship_date|date:"m/d/Y"}}</td>
+          {% endif %}
           <td>{{other.product.prod_name}}</td>
           <td>{{other.product.lot_num}}</td>
           <td>{{other.product.best_by|date:"m/d/Y"}}</td>

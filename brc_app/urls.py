@@ -28,4 +28,6 @@ urlpatterns = [
     path('receiving/add', views.receiving_add),
     path('production', views.production),
     path('production/add', views.production_add),
+    path('shipping', views.shipping),
+    path('shipping/add', views.shipping_add),
 ]

@@ -366,7 +366,7 @@ def receiving(request):
   request.session['lot'] = ''
   request.session['qty'] = ''
   request.session['best_by'] = ''
-  request.session['supplier'] = ''
+  request.session['supp_cust'] = ''
   request.session['truck'] = ''
   request.session['truck_no'] = ''
   request.session['employee'] = ''
@@ -394,7 +394,7 @@ def receiving_add(request):
   if request.method == "GET":
     if request.path == '/brc/receiving/add':
       context = {
-        'suppliers': Supplier.objects.all().exclude(active=False),
+        'supps_custs': Supplier.objects.all().exclude(active=False),
         'trucks': Truck.objects.all().exclude(active=False),
         'employees': Employee.objects.all().exclude(active=False),
         'source': 'Receiving',
@@ -410,7 +410,7 @@ def receiving_add(request):
     request.session['lot'] = request.POST['lot']
     request.session['qty'] = request.POST['qty']
     request.session['best_by'] = request.POST['best_by']
-    request.session['supplier'] = request.POST['supplier']
+    request.session['supp_cust'] = request.POST['supp_cust']
     request.session['truck'] = request.POST['truck']
     request.session['truck_no'] = request.POST['truck_no']
     request.session['employee'] = request.POST['employee']
@@ -425,7 +425,7 @@ def receiving_add(request):
         prod_name = request.POST['product'],
         best_by = request.POST['best_by'],
         type = "I")
-      this_supplier = Supplier.objects.get(id=request.POST['supplier'])
+      this_supplier = Supplier.objects.get(id=request.POST['supp_cust'])
       this_truck = Truck.objects.get(id=request.POST['truck'])
       this_employee = Employee.objects.get(id=request.POST['employee'])
       Receive.objects.create(
@@ -467,30 +467,9 @@ def production(request):
   request.session['lids'] = ''
   request.session['remployee'] = ''
   request.session['rdate'] = ''
-  productions = Production.objects.order_by('production_date')
-  products = Product.objects.filter(type='F')
-  prod_products = Product.objects.filter(type='F')
-  # for prod in products:
-    # print(prod.incoong)
-  
-  for product in productions:
-    # products = production.prodproduct_set.all()
-    print(product.production_date)
-    x = product.prodproduct_set.filter(production_id=product.id)
-    # y = x.filter(production_id=product.id)
-    # for y in x:
-    print(x)
-    # print(production.products.prod_name)
-    # for product in products:
-      # print(prod_product.products.get(id =))
-      # fid = production_product.id
-      # print(product)
-      # print(product.lot_num)
-      # print(product.type)
-
+  prod_products = ProdProduct.objects.select_related('production', 'product')
   context = {
-    'productions': productions,
-    'products': Product.objects.all(),
+    'productions': prod_products,
     'add': False,
   }
   return render(request, 'production.html', context)
@@ -577,3 +556,75 @@ def production_add(request):
           employee = this_employee,
           location = prod_locations[i-1])
     return redirect('/brc/production')
+
+
+def shipping(request):
+  if 'logged_in' not in request.session:
+    return redirect('/')
+  request.session['date'] = ''
+  request.session['product'] = ''
+  request.session['lot'] = ''
+  request.session['qty'] = ''
+  request.session['best_by'] = ''
+  request.session['supp_cust'] = ''
+  request.session['truck'] = ''
+  request.session['truck_no'] = ''
+  request.session['employee'] = ''
+  if request.path == '/brc/shipping':
+    context = {
+      'others': Ship.objects.all().order_by('ship_date'),
+      'source': 'Shipping',
+      'path': 'shipping',
+    }
+  else:
+    context = {}
+  return render(request, 'rcv_shp_list.html', context)
+
+def shipping_add(request):
+  if 'logged_in' not in request.session:
+      return redirect('/')
+  if request.method == "GET":
+    if request.path == '/brc/shipping/add':
+      # print(Product.objects.all())
+      context = {
+        'supps_custs': Customer.objects.all().exclude(active=False),
+        'trucks': Truck.objects.all().exclude(active=False),
+        'employees': Employee.objects.all().exclude(active=False),
+        'flots': Product.objects.filter(type='F').order_by('-prod_name'),
+        'source': 'Shipping',
+        'path': 'shipping',
+        'edit': False
+      }
+    else:
+      context={}
+    return render(request, 'rcv_shp_add_edit.html', context)
+  else:
+    request.session['date'] = request.POST['date']
+    request.session['product'] = request.POST['product']
+    request.session['lot'] = request.POST['lot']
+    request.session['qty'] = request.POST['qty']
+    # request.session['best_by'] = request.POST['best_by']
+    request.session['supp_cust'] = request.POST['supp_cust']
+    request.session['truck'] = request.POST['truck']
+    request.session['truck_no'] = request.POST['truck_no']
+    request.session['employee'] = request.POST['employee']
+    if '/brc/shipping/add' in request.path:
+      errors = Receive.objects.addShValidation(request.POST)
+      if errors:
+        for key, value in errors.items():
+          messages.error(request, value)
+        return redirect('/brc/shipping/add')
+      this_product = Product.objects.get(id=request.POST['lot'])
+      this_customer = Customer.objects.get(id=request.POST['supp_cust'])
+      this_truck = Truck.objects.get(id=request.POST['truck'])
+      this_employee = Employee.objects.get(id=request.POST['employee'])
+      Ship.objects.create(
+        ship_date = request.POST['date'],
+        product = this_product,
+        qty = request.POST['qty'],
+        customer = this_customer,
+        trucker = this_truck,
+        employee = this_employee)
+      return redirect('/brc/shipping')
+    else:
+      return redirect('/brc/shipping')
