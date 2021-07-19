@@ -434,7 +434,8 @@ def receiving_add(request):
         qty = request.POST['qty'],
         supplier = this_supplier,
         trucker = this_truck,
-        employee = this_employee)
+        truck_num = request.POST['truck_no'],
+        received_by = this_employee)
       return redirect('/brc/receiving')
     else:
       return redirect('/brc/shipping')
@@ -585,7 +586,6 @@ def shipping_add(request):
       return redirect('/')
   if request.method == "GET":
     if request.path == '/brc/shipping/add':
-      # print(Product.objects.all())
       context = {
         'supps_custs': Customer.objects.all().exclude(active=False),
         'trucks': Truck.objects.all().exclude(active=False),
@@ -603,7 +603,6 @@ def shipping_add(request):
     request.session['product'] = request.POST['product']
     request.session['lot'] = request.POST['lot']
     request.session['qty'] = request.POST['qty']
-    # request.session['best_by'] = request.POST['best_by']
     request.session['supp_cust'] = request.POST['supp_cust']
     request.session['truck'] = request.POST['truck']
     request.session['truck_no'] = request.POST['truck_no']
@@ -624,7 +623,8 @@ def shipping_add(request):
         qty = request.POST['qty'],
         customer = this_customer,
         trucker = this_truck,
-        employee = this_employee)
+        truck_num = request.POST['truck_no'],
+        shipped_by = this_employee)
       return redirect('/brc/shipping')
     else:
       return redirect('/brc/shipping')

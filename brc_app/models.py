@@ -161,6 +161,17 @@ class InfoManager(models.Manager):
       pass
     return errors
 
+  def traceValidation(self, post_data):
+    errors={}
+    if len(post_data['plot']) < 2:
+      errors['plot'] = 'LOT Number must be at least 2 characters.'
+    else:
+      try:
+        Product.objects.get(lot_num=post_data['plot'])
+      except:
+        errors['plot'] = "The LOT Number dose NOT exist!"
+    return errors
+
 class Employee(models.Model):
   emp_id= models.CharField(max_length=10, unique=True)
   first_name = models.CharField(max_length=55)
@@ -190,6 +201,7 @@ class Product(models.Model):
   type = models.CharField(max_length=1) # "I" for Incoming, "F" for Finished
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
+  objects = InfoManager()
 
 class Supplier(models.Model):
   name = models.CharField(max_length=55)
@@ -217,33 +229,35 @@ class Truck(models.Model):
 
 class Receive(models.Model):
   receive_date = models.DateField()
-  product = models.ForeignKey(Product, related_name='received_product', on_delete=models.CASCADE)
+  product = models.ForeignKey(Product, on_delete=models.CASCADE)
   qty = models.IntegerField()
-  supplier = models.ForeignKey(Supplier, related_name='suppliers', on_delete=models.CASCADE)
-  trucker = models.ForeignKey(Truck, related_name='received_truckers', on_delete=models.CASCADE)
-  employee = models.ForeignKey(Employee, related_name='recieved_by', on_delete=models.CASCADE)
+  supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+  trucker = models.ForeignKey(Truck, on_delete=models.CASCADE)
+  truck_num = models.CharField(max_length=55)
+  employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
   objects = InfoManager()
 
 class Ship(models.Model):
   ship_date = models.DateField()
-  product = models.ForeignKey(Product, related_name='shipped_product', on_delete=models.CASCADE)
+  product = models.ForeignKey(Product, on_delete=models.CASCADE)
   qty = models.IntegerField()
-  customer = models.ForeignKey(Customer, related_name='customers', on_delete=models.CASCADE)
-  trucker = models.ForeignKey(Truck, related_name='shipped_truckers', on_delete=models.CASCADE)
-  employee = models.ForeignKey(Employee, related_name='shipped_by', on_delete=models.CASCADE)
+  customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+  trucker = models.ForeignKey(Truck, on_delete=models.CASCADE)
+  truck_num = models.CharField(max_length=55)
+  employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
   objects = InfoManager()
 
 class Production(models.Model):
   production_date = models.DateField()
-  created_by = models.ForeignKey(User, related_name='procductions_user', on_delete=models.CASCADE)
+  created_by = models.ForeignKey(User, on_delete=models.CASCADE)
   liner_lot = models.CharField(max_length=55)
   tubs_lot = models.CharField(max_length=55)
   lids_lot = models.CharField(max_length=55)
-  released_by = models.ForeignKey(Employee, related_name='productions', on_delete=models.CASCADE)
+  released_by = models.ForeignKey(Employee, on_delete=models.CASCADE)
   released_date = models.DateField()
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)

@@ -34,8 +34,10 @@
           <th scope="col">LOT #</th>
           <th scope="col">Best By</th>
           {% if path == 'receiving' %}
+          <th scope="col">Supplier</th>
           <th scope="col">Received By</th>
           {% else %}
+          <th scope="col">Customer</th>
           <th scope="col">Shipped By</th>
           {% endif %}
           <th scope="col">Action</th>
@@ -52,6 +54,11 @@
           <td>{{other.product.prod_name}}</td>
           <td>{{other.product.lot_num}}</td>
           <td>{{other.product.best_by|date:"m/d/Y"}}</td>
+          {% if path == 'receiving' %}
+          <td>{{other.supplier.name}}</td>
+          {% else %}
+          <td>{{other.customer.name}}</td>
+          {% endif %}
           <td>{{other.employee.first_name}} {{other.employee.last_name}}</td>
           <td>
             <a href="/brc/{{path}}/edit/{{other.id}}" class="btn btn-primary" role="button">Edit</a>
