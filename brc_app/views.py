@@ -590,7 +590,7 @@ def shipping_add(request):
         'supps_custs': Customer.objects.all().exclude(active=False),
         'trucks': Truck.objects.all().exclude(active=False),
         'employees': Employee.objects.all().exclude(active=False),
-        'flots': Product.objects.filter(type='F').order_by('-prod_name'),
+        'flots': Product.objects.all().order_by('-prod_name'),
         'source': 'Shipping',
         'path': 'shipping',
         'edit': False

@@ -19,7 +19,35 @@
 
 <body>
   <div class="container mb-5">
-Backward
+    <div class="d-flex bd-highlight">
+      <p class="p-2 flex-grow-1 bd-highlight fs-5 fw-bold mt-5">Product Backward Tracing</p>
+      <p class="p-3 bd-highlight"><a href="/brc">Home</a></p>
+      <p class="p-3 flex-shrink-1 bd-highlight fw-bold">Loggen in as {{request.session.first_name}}!</p>
+      <p class="p-3 flex-shrink bd-highlight"><a href="/">Logout</a></p>
+    </div>
+    {% if results %}
+    {% else %}
+      {% if messages %}
+        {% for message in messages %}
+          <p style="color: red;">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+      <form action="/reports/forward" method="POST">
+        {% csrf_token %}
+        <div class="row g-5 mb-4 mt-1">
+          <div class="col-2">
+            <label class="form-label fw-bold">Product LOT #</label>
+          </div>
+          <div class="col-auto">
+            <input type="text" class="form-control" name="plot" value="{{request.session.plot}}">
+          </div>
+        </div>
+        <div class="d-grid gap-2 col-2 ms-5">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form><br>
+    {% endif %}
+    <a href="/brc">Back to Main Menu</a>
   </div>
 </body>
 

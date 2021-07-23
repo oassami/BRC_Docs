@@ -18,50 +18,110 @@ def forward(request):
         messages.error(request, value)
       return redirect('/reports/forward')
     this_product = Product.objects.get(lot_num=request.POST['plot'])
-    if this_product.type == 'I':
-
-
-      prod_products = ProdProduct.objects.select_related('product', 'production').filter(product=this_product)
-      if prod_products:
-        for x in prod_products:
-          print(x.product.lot_num)
-          print(x.product.prod_name)
-          print(x.production.production_date)
-
-      context = {
-        
-        'results': True,
-        'product_type': 'I'
-      }
-
-
+    if this_product.type == 'I':    # this is an incoming product
+      print('1')
+      received_from = Receive.objects.select_related('product', 'supplier', 'trucker', 'employee').get(product=this_product)
+      try: # this incoming product was processed
+        prod_iproduct = ProdProduct.objects.select_related('product', 'production').get(product=this_product)
+        try_ok = True
+      except: # this incoming product was NOT processed
+        try_ok = False
+      if try_ok: # this incoming product was processed
+        prod_fproducts = ProdProduct.objects.select_related('product', 'production').filter(production=prod_iproduct.production)
+        if prod_fproducts:
+          print('2')
+          for prod_fproduct in prod_fproducts:
+            if prod_fproduct.product.type == 'F':
+              print('2.1')
+              shipped_to = Ship.objects.select_related('customer', 'trucker', 'employee').filter(product=prod_fproduct.product)
+              qty_shipped = 0
+              if shipped_to:
+                print('2.2')
+                for ship_to in shipped_to:
+                  qty_shipped += ship_to.qty
+                qty_on_hand = prod_fproduct.quantity - qty_shipped
+                qty_rec_on_hand = received_from.qty-prod_iproduct.quantity
+                recovered = int(100-(((prod_fproduct.quantity - (qty_shipped + qty_on_hand))/prod_fproduct.quantity)*100))
+                processed_recovered = int(100-(((prod_fproduct.quantity - (qty_shipped + qty_on_hand))/prod_fproduct.quantity)*100))
+                received_recovered = int(100-(((received_from.qty-(prod_iproduct.quantity + qty_rec_on_hand))/prod_iproduct.quantity)*100))
+                context = {
+                  'received_from': received_from,
+                  'prod_iproduct': prod_iproduct,
+                  'qty_rec_on_hand': qty_rec_on_hand,
+                  'prod_fproduct': prod_fproduct,
+                  'shipped_to': shipped_to,
+                  'qty_shipped': qty_shipped,
+                  'qty_on_hand': qty_on_hand,
+                  'rrecovered': received_recovered,
+                  'precovered': processed_recovered,
+                  'product_status': 'processed_shipped',
+                  'results': True,
+                  'product_type': 'I'
+                }
+              else:
+                print('2.3')
+                qty_on_hand = prod_fproduct.quantity - qty_shipped
+                qty_rec_on_hand = received_from.qty-prod_iproduct.quantity
+                processed_recovered = int(100-(((prod_fproduct.quantity - (qty_shipped + qty_on_hand))/prod_fproduct.quantity)*100))
+                received_recovered = int(100-(((received_from.qty-(prod_iproduct.quantity + qty_rec_on_hand))/prod_iproduct.quantity)*100))
+                context = {
+                  'received_from': received_from,
+                  'prod_iproduct': prod_iproduct,
+                  'qty_rec_on_hand': qty_rec_on_hand,
+                  'prod_fproduct': prod_fproduct,
+                  'qty_shipped': qty_shipped,
+                  'qty_on_hand': qty_on_hand,
+                  'rrecovered': received_recovered,
+                  'precovered': processed_recovered,
+                  'product_status': 'processed_not_shipped',
+                  'results': True,
+                  'product_type': 'I'
+                  }
+      else: # this incoming product was NOT processed
+        print('3')
+        shipped_to = Ship.objects.select_related('customer', 'trucker', 'employee').filter(product=this_product)
+        qty_shipped = 0
+        if shipped_to:
+          print('4')
+          for ship_to in shipped_to:
+            qty_shipped += ship_to.qty
+          qty_on_hand = received_from.qty - qty_shipped
+          recovered = int(100-(((received_from.qty - (qty_shipped + qty_on_hand))/received_from.qty)*100))
+          context = {
+            'received_from': received_from,
+            'shipped_to': shipped_to,
+            'product_status': 'not_processed_shipped',
+            'qty_shipped': qty_shipped,
+            'qty_on_hand': qty_on_hand,
+            'recovered': recovered,
+            'results': True,
+            'product_type': 'I'
+          }
+        else:
+          print('5')
+          context = {
+            'this_product': this_product,
+            'received_from': received_from,
+            'product_status': 'not_processed_not_shipped',
+            'results': True,
+            'product_type': 'I'
+          }
     else:
+      print('6')
       prod_product = ProdProduct.objects.select_related('production', 'product').get(product=this_product)
-      # print('Lot #: ', prod_product.product.lot_num)
-      # print('Product Name: ', prod_product.product.prod_name)
-      # print('Best By Date: ', prod_product.product.best_by)
-      # print('QTY: ', prod_product.quantity)
-      # print('Productioin Date: ', prod_product.production.production_date)
-      ship_to_customers = Ship.objects.select_related('customer', 'trucker', 'employee').filter(product=this_product)
+      shipped_to = Ship.objects.select_related('customer', 'trucker', 'employee').filter(product=this_product)
       qty_shipped = 0
-      qty_on_hand = 0 
-      if ship_to_customers:
-        for ship_to in ship_to_customers:
+      if shipped_to:
+        print('7')
+        for ship_to in shipped_to:
           qty_shipped += ship_to.qty
-          qty_on_hand = prod_product.quantity - qty_shipped
-          # print('Customer Name: ', ship_to.customer.name)
-          # print('QTY to this Customer: ', ship_to.qty)
-          # print('Shipping Date: ', ship_to.ship_date)
-          # print('Trucking Company: ', ship_to.trucker.name)
-          # print('Truck #: ', ship_to.truck_num)
-          # print('Shipped By: ', ship_to.employee.first_name)
-        recovered = int(100-(((prod_product.quantity - (qty_shipped + qty_on_hand))/prod_product.quantity)*100))
-        # print('recovered', recovered)
+      qty_on_hand = prod_product.quantity - qty_shipped
+      recovered = int(100-(((prod_product.quantity - (qty_shipped + qty_on_hand))/prod_product.quantity)*100))
       context = {
         'prod_product': prod_product,
-        'ship_to_customers': ship_to_customers,
+        'shipped_to': shipped_to,
         'qty_shipped': qty_shipped,
-        'qty_on_hand': prod_product.quantity - qty_shipped,
+        'qty_on_hand': qty_on_hand,
         'recovered': recovered,
         'results': True,
         'product_type': 'F'
@@ -71,5 +131,11 @@ def forward(request):
 def backward(request):
   if 'logged_in' not in request.session:
     return redirect('/')
+  if request.method == "GET":
+    context = {
+      'results': False,
+    }
+    return render(request, 'backward.html', context)
+
   return render(request, 'backward.html')
 

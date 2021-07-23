@@ -29,7 +29,107 @@
     </div>
     {% if results %}
       {% if product_type == 'I' %}
-
+        {% if product_status == 'not_processed_not_shipped' %}
+          <p>Received Product LOT #: {{received_from.product.lot_num}}</p>
+          <p>Received Product Name: {{received_from.product.prod_name}}</p>
+          <p>Received On: {{received_from.receive_date|date:"m/d/Y"}}</p>
+          <p>Received Qty: {{received_from.qty}}</p>
+          <p class="fw-bold">This Product is neither processed nor shipped</p>
+        {% endif %}
+        {% if product_status == 'processed_not_shipped' %}
+          <p>Received Product LOT #: {{received_from.product.lot_num}}</p>
+          <p>Received Product Name: {{received_from.product.prod_name}}</p>
+          <p>Received On: {{received_from.receive_date|date:"m/d/Y"}}</p>
+          <p>Received Qty: {{received_from.qty}}</p>
+          <p>Production LOT #: {{prod_fproduct.product.lot_num}}</p>
+          <p>Production Name: {{prod_fproduct.product.prod_name}}</p>
+          <p>Production Date: {{prod_fproduct.production.production_date|date:"m/d/Y"}}</p>
+          <p>Production QTY: {{prod_fproduct.quantity}}</p>
+          <p class="fw-bold">This Product is processed but not shipped</p>
+          <h4>Summary</h4>
+          <h6>Qty Received: {{received_from.qty}}</h6>
+          <h6>Qty Received Processed: {{prod_iproduct.quantity}}</h6>
+          <h6>Qty Recieved on Hand: {{qty_rec_on_hand}}</h6>
+          <h5>Recovered: {{rrecovered}}%</h5><br>
+          <h6>Qty Produced: {{prod_fproduct.quantity}}</h6>
+          <h6>Qty Produced Shipped: {{qty_shipped}}</h6>
+          <h6>Qty Produced on Hand: {{qty_on_hand}}</h6><br>
+          <h5>Recovered: {{precovered}}%</h5><br>
+        {% endif %}
+        {% if product_status == 'not_processed_shipped' %}
+          <p>Received Product LOT #: {{received_from.product.lot_num}}</p>
+          <p>Received Product Name: {{received_from.product.prod_name}}</p>
+          <p>Received On: {{received_from.receive_date|date:"m/d/Y"}}</p>
+          <p>Received Qty: {{received_from.qty}}</p>
+          <p class="fw-bold">This Product was not processed but shipped as-is</p>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Customer</th>
+                <th scope="col">QTY</th>
+                <th scope="col">Date Shipped</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ship_to_customer in shipped_to %}
+              <tr>
+                <td>{{ship_to_customer.customer.name}}</td>
+                <td>{{ship_to_customer.qty}}</td>
+                <td>{{ship_to_customer.ship_date|date:"m/d/Y"}}</td>
+              </tr>
+              {% empty %}
+                <td class="fw-bold">This Product is processed but not shipped</td>
+                <td></td>
+                <td></td>
+                {% endfor %}
+            </tbody>
+          </table>
+          <h4>Summary</h4>
+          <h6>Qty Shipped: {{qty_shipped}}</h6>
+          <h6>Qty on Hand: {{qty_on_hand}}</h6><br>
+          <h5>Recovered: {{recovered}}%</h5><br>
+        {% endif %}
+        {% if product_status == 'processed_shipped' %}
+          <p>Received Product LOT #: {{received_from.product.lot_num}}</p>
+          <p>Received Product Name: {{received_from.product.prod_name}}</p>
+          <p>Received On: {{received_from.receive_date|date:"m/d/Y"}}</p>
+          <p>Received Qty: {{received_from.qty}}</p>
+          <p>Production LOT #: {{prod_fproduct.product.lot_num}}</p>
+          <p>Production Name: {{prod_fproduct.product.prod_name}}</p>
+          <p>Production Date: {{prod_fproduct.production.production_date|date:"m/d/Y"}}</p>
+          <p>Production QTY: {{prod_fproduct.quantity}}</p>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Customer</th>
+                <th scope="col">QTY</th>
+                <th scope="col">Date Shipped</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ship_to_customer in shipped_to %}
+              <tr>
+                <td>{{ship_to_customer.customer.name}}</td>
+                <td>{{ship_to_customer.qty}}</td>
+                <td>{{ship_to_customer.ship_date|date:"m/d/Y"}}</td>
+              </tr>
+              {% empty %}
+                <td class="fw-bold">This Product is processed but not shipped</td>
+                <td></td>
+                <td></td>
+                {% endfor %}
+            </tbody>
+          </table>
+          <h4>Summary</h4>
+          <h6>Qty Received: {{received_from.qty}}</h6>
+          <h6>Qty Received Processed: {{prod_iproduct.quantity}}</h6>
+          <h6>Qty Recieved on Hand: {{qty_rec_on_hand}}</h6>
+          <h5>Recovered: {{rrecovered}}%</h5><br>
+          <h6>Qty Produced: {{prod_fproduct.quantity}}</h6>
+          <h6>Qty Produced Shipped: {{qty_shipped}}</h6>
+          <h6>Qty Produced on Hand: {{qty_on_hand}}</h6><br>
+          <h5>Recovered: {{precovered}}%</h5><br>
+        {% endif %}
       {% else %}
         <p>Product LOT #: {{prod_product.product.lot_num}}</p>
         <p>Product Name: {{prod_product.product.prod_name}}</p>
@@ -44,13 +144,17 @@
             </tr>
           </thead>
           <tbody>
-            {% for ship_to_customer in ship_to_customers %}
+            {% for ship_to_customer in shipped_to %}
             <tr>
               <td>{{ship_to_customer.customer.name}}</td>
               <td>{{ship_to_customer.qty}}</td>
               <td>{{ship_to_customer.ship_date|date:"m/d/Y"}}</td>
             </tr>
-            {% endfor %}
+            {% empty %}
+              <td class="fw-bold">This Product is processed but not shipped</td>
+              <td></td>
+              <td></td>
+              {% endfor %}
           </tbody>
         </table>
         <h4>Summary</h4>
