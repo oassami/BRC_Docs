@@ -26,13 +26,65 @@
       <p class="p-3 flex-shrink bd-highlight"><a href="/">Logout</a></p>
     </div>
     {% if results %}
+      <p>Product LOT #: {{prod_fproduct.product.lot_num}}</p>
+      <p>Product Name: {{prod_fproduct.product.prod_name}}</p>
+      <p>Producted Qty: {{prod_fproduct.quantity}}</p>
+      {% if prod_fproduct.product.type == 'F' and iprod == 1 %}
+      <p class="fw-bold mb-1 mt-5">Prodcuted from:</p>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">LOT #</th>
+            <th scope="col">Name</th>
+            <th scope="col">Production QTY</th>
+            <th scope="col">Recieved On</th>
+            <th scope="col">Recieved By</th>
+            <th scope="col">Total QTY Received</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{prod_iproduct.product.lot_num}}</td>
+            <td>{{prod_iproduct.product.prod_name}}</td>
+            <td>{{prod_iproduct.quantity}}</td>
+            <td>{{recieved_from.receive_date|date:"m/d/Y"}}</td>
+            <td>{{recieved_from.employee.first_name}}</td>
+            <td>{{recieved_from.qty}}</td>
+          </tr>
+        </tbody>
+      </table>
+      {% else %}
+      <p class="fw-bold mb-1 mt-5">Prodcuted from:</p>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">LOT #</th>
+            <th scope="col">Name</th>
+            <th scope="col">Production QTY</th>
+            <th scope="col">Recieved On</th>
+            <th scope="col">Recieved By</th>
+            <th scope="col">Total QTY Received</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{prod_iproduct.product.lot_num}}</td>
+            <td>{{prod_iproduct.product.prod_name}}</td>
+            <td>{{prod_iproduct.quantity}}</td>
+            <td>{{recieved_from.receive_date|date:"m/d/Y"}}</td>
+            <td>{{recieved_from.employee.first_name}}</td>
+            <td>{{recieved_from.qty}}</td>
+          </tr>
+        </tbody>
+      </table>
+      {% endif %}
     {% else %}
       {% if messages %}
         {% for message in messages %}
           <p style="color: red;">{{ message }}</p>
         {% endfor %}
       {% endif %}
-      <form action="/reports/forward" method="POST">
+      <form action="/reports/backward" method="POST">
         {% csrf_token %}
         <div class="row g-5 mb-4 mt-1">
           <div class="col-2">

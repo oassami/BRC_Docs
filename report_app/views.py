@@ -136,6 +136,55 @@ def backward(request):
       'results': False,
     }
     return render(request, 'backward.html', context)
-
-  return render(request, 'backward.html')
+  else:
+    errors = Product.objects.traceValidation(request.POST)
+    if errors:
+      for key, value in errors.items():
+        messages.error(request, value)
+      return redirect('/reports/backward')
+    this_product = Product.objects.get(lot_num=request.POST['plot'])
+    if this_product.type == 'I':    # this is an incoming product
+      print('1')
+      recieved_from = Receive.objects.select_related('supplier', 'trucker', 'employee').get(product=this_product)
+      context = {
+        'this_product': this_product,
+        'recieved_from': recieved_from,
+        'results': True,
+        'product_type': 'F'
+      }
+    else:
+      print('2')
+      prod_fproduct = ProdProduct.objects.select_related('product', 'production').get(product=this_product)
+      print(prod_fproduct.product.lot_num)
+      prod_products = ProdProduct.objects.select_related('product', 'production').filter(production=prod_fproduct.production)
+      if prod_products.count() == 2:
+        print('3')
+        for p in prod_products:
+          if p.product.type == 'I':
+            prod_iproduct = p
+        print('3.1', p.id, p.product.lot_num)
+        print('3.2', prod_iproduct.product.lot_num)
+        recieved_from = Receive.objects.select_related('supplier', 'trucker', 'employee').get(product=prod_iproduct.product)
+        context = {
+          'prod_iproduct': prod_iproduct,
+          'prod_fproduct': prod_fproduct,
+          'recieved_from': recieved_from,
+          'iprod': 1,
+          'results': True,
+          'product_type': 'F'
+        }
+      else:
+        # print('4', prod_iproduct)
+        x=1
+        context={}
+        for p in prod_products:
+          if p.product.type == 'I':
+            context[f'prod_iproduct{x}'] = p
+            context[f'recieved_from{x}'] = Receive.objects.select_related('supplier', 'trucker', 'employee').get(product=p.product)
+            x += 1
+        context['this_product'] = this_product
+        context['iprod'] = 2
+        context['results'] = True
+        context['product_type'] = 'F'
+  return render(request, 'backward.html', context)
 
