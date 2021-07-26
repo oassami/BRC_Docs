@@ -94,7 +94,7 @@
         {% if path == 'receiving' %}
           <input type="text" class="form-control" name="product" value="{{request.session.product}}" id="txtresultes">
         {% else %}
-          <input disabled type="text" class="form-control" name="product" value="{{request.session.product}}" id="txtresultes">
+          <input readonly style="background-color: white;" type="text" class="form-control" name="product" value="{{request.session.product}}" id="txtresultes">
           {% endif %}
         </div>
       </div>
@@ -139,11 +139,11 @@
       </div>
       <div class="row g-5 mb-2">
         <div class="col-2">
-          <label class="form-label">Trucking Company</label>
+          <label class="form-label">Carrier</label>
         </div>
         <div class="col-2">
           <select class="form-select" name="truck">
-            <option selected value="0">Select a Company</option>
+            <option selected value="0">Select a Carrier</option>
             {% for truck in trucks %}
               <option value="{{truck.id}}">{{truck.name}}</option>
             {% endfor %}

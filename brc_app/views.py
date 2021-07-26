@@ -191,7 +191,7 @@ def others(request):
   elif request.path == '/brc/trucking':
     context = {
       'all_others': Truck.objects.all().order_by('-active'),
-      'source': 'Truck',
+      'source': 'Carrier',
       'path': 'trucking',
     }
   else:
@@ -216,7 +216,7 @@ def other_add(request):
       }
     elif request.path == '/brc/trucking/add':
       context = {
-        'source': 'Truck',
+        'source': 'Carrier',
         'path': 'trucking',
         'edit': False
       }
@@ -297,7 +297,7 @@ def other_edit(request, other_id):
     elif '/brc/trucking/edit' in request.path:
       context = {
         'this_other': Truck.objects.get(id=other_id),
-        'source': 'Trucking',
+        'source': 'Carrier',
         'path': 'trucking',
         'edit': True
       }
