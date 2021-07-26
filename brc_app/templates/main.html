@@ -85,7 +85,84 @@
         </div>
       </div>
     </nav>
-    <br><br><p>Add some statistics to this home-page</p>
+    <legend class="mt-3 mb-3">Some Recent Infomation:</legend>
+    <fieldset class="border p-2 mt-3 mb-3">
+      <h5>Receiving:</h5>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Product</th>
+            <th scope="col">LOT #</th>
+            <th scope="col">Best By</th>
+            <th scope="col">Supplier</th>
+            <th scope="col">Received By</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for receive in received %}
+          <tr>
+            <td>{{receive.receive_date|date:"m/d/Y"}}</td>
+            <td>{{receive.product.prod_name}}</td>
+            <td>{{receive.product.lot_num}}</td>
+            <td>{{receive.product.best_by|date:"m/d/Y"}}</td>
+            <td>{{receive.supplier.name}}</td>
+            <td>{{receive.employee.first_name}} {{receive.employee.last_name}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </fieldset>
+    <fieldset class="border p-2 mt-3 mb-3">
+      <h5>Shipping:</h5>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Product</th>
+            <th scope="col">LOT #</th>
+            <th scope="col">Best By</th>
+            <th scope="col">Customer</th>
+            <th scope="col">Shipped By</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ship in shipped %}
+          <tr>
+            <td>{{ship.ship_date|date:"m/d/Y"}}</td>
+            <td>{{ship.product.prod_name}}</td>
+            <td>{{ship.product.lot_num}}</td>
+            <td>{{ship.product.best_by|date:"m/d/Y"}}</td>
+            <td>{{ship.customer.name}}</td>
+            <td>{{ship.employee.first_name}} {{ship.employee.last_name}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </fieldset>
+    <fieldset class="border p-2 mt-3 mb-3">
+      <h5>Production:</h5>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Finished Product</th>
+            <th scope="col">LOT #</th>
+            <th scope="col">Best By</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for produ in productions %}
+          <tr>
+              <td>{{produ.production.production_date|date:"m/d/Y"}}</td>
+              <td>{{produ.product.prod_name}}</td>
+              <td>{{produ.product.lot_num}}</td>
+              <td>{{produ.product.best_by|date:"m/d/Y"}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </fieldset>
   </div>
 </body>
 

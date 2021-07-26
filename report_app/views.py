@@ -166,6 +166,7 @@ def backward(request):
         print('3.2', prod_iproduct.product.lot_num)
         recieved_from = Receive.objects.select_related('supplier', 'trucker', 'employee').get(product=prod_iproduct.product)
         context = {
+          'this_product': this_product,
           'prod_iproduct': prod_iproduct,
           'prod_fproduct': prod_fproduct,
           'recieved_from': recieved_from,
@@ -174,16 +175,19 @@ def backward(request):
           'product_type': 'F'
         }
       else:
-        # print('4', prod_iproduct)
-        x=1
+        print('4')
+        x = 0
         context={}
         for p in prod_products:
           if p.product.type == 'I':
+            print('5', p.product.lot_num)
+            x += 1
             context[f'prod_iproduct{x}'] = p
             context[f'recieved_from{x}'] = Receive.objects.select_related('supplier', 'trucker', 'employee').get(product=p.product)
-            x += 1
+        print('x',x)
+        context['prod_fproduct'] = prod_fproduct
         context['this_product'] = this_product
-        context['iprod'] = 2
+        context['iprod'] = x
         context['results'] = True
         context['product_type'] = 'F'
   return render(request, 'backward.html', context)

@@ -17,6 +17,17 @@
   <!-- JavaScript -->
   <script src="{% static 'js\bootstrap.bundle.min.js' %}" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
   <!-- Bootstrap TAGS -->
+
+  <script src="{% static 'js\jquery-3.6.0.js' %}"></script>
+  <script>
+    $(function(){
+      $("#ddlselect").change(function(){
+        var displayproduct=$("#ddlselect option:selected").text();
+        $("#txtresultes").val(displayproduct);
+      })
+    })
+  </script>
+  
 </head>
 
 <body>
@@ -51,14 +62,6 @@
           <input type="date" class="form-control" name="date" value="{{request.session.date}}">
         </div>
       </div>
-      <div class="row g-5 mb-2">
-        <div class="col-2">
-          <label class="form-label">Product</label>
-        </div>
-        <div class="col-auto">
-          <input type="text" class="form-control" name="product" value="{{request.session.product}}">
-        </div>
-      </div>
       {% if path == 'receiving' %}
       <div class="row g-5 mb-2">
         <div class="col-2">
@@ -74,15 +77,27 @@
           <label class="form-label">LOT #</label>
         </div>
         <div class="col-2">
-          <select class="form-select" name="lot">
-          <option selected value="0">Select a LOT #</option>
+          <select class="form-select" name="lot" id="ddlselect">
+          <option selected value="0" label="Select a LOT #"></option>
           {% for flot in flots %}
-            <option value="{{flot.id}}">{{flot.lot_num}}</option>
+            <option value="{{flot.id}}" label="{{flot.lot_num}}">{{flot.prod_name}}</option>
           {% endfor %}
           </select>
         </div>
       </div>
       {% endif %}
+      <div class="row g-5 mb-2">
+        <div class="col-2">
+          <label class="form-label">Product</label>
+        </div>
+        <div class="col-auto">
+        {% if path == 'receiving' %}
+          <input type="text" class="form-control" name="product" value="{{request.session.product}}" id="txtresultes">
+        {% else %}
+          <input disabled type="text" class="form-control" name="product" value="{{request.session.product}}" id="txtresultes">
+          {% endif %}
+        </div>
+      </div>
       <div class="row g-5 mb-2">
         <div class="col-2">
           <label class="form-label">Quantity</label>

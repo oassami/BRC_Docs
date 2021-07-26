@@ -9,7 +9,14 @@ import bcrypt
 def main(request):
   if 'logged_in' not in request.session:
     return redirect('/')
-  return render(request, 'main.html')
+  context = {
+    'received': Receive.objects.all().order_by('-receive_date')[:3],
+    'shipped': Ship.objects.all().order_by('-ship_date')[:3],
+    'productions': ProdProduct.objects.order_by('-production__production_date').select_related('product').filter(product__type='F')[:3],
+    'source': 'Receiving',
+    'path': 'receiving',
+  }
+  return render(request, 'main.html', context)
 
 def users(request):
   if 'logged_in' not in request.session or not request.session['user_level'] == "Admin":

@@ -18,6 +18,21 @@
     crossorigin="anonymous"></script>
   <!-- Bootstrap TAGS -->
 
+  <script src="{% static 'js\jquery-3.6.0.js' %}"></script>
+  <script>
+    $(function(){
+      $("#ilot1_id").change(function(){
+        var displayproduct1=$("#ilot1_id option:selected").text();
+        $("#iname1_id").val(displayproduct1);
+      })
+      $("#ilot2_id").change(function(){
+        var displayproduct2=$("#ilot2_id option:selected").text();
+        $("#iname2_id").val(displayproduct2);
+      })
+    })
+  </script>
+  
+
 </head>
 
 <body>
@@ -47,21 +62,17 @@
         </div>
         <div class="row g-5 mb-2">
           <div class="col-md-3">
-            <label class="form-label fw-bold">Incoming Product</label>
-            <select class="form-select" name="ilot1">
-              {% if request.session.ilot1 %}
-                <option selected value="{{request.session.ilot1}}">{{request.session.ilot1}}</option>
-              {% else %}
-                <option selected value="0">Select a LOT # </option>
-                {% endif %}
+            <label class="form-label fw-bold">Incoming LOT#</label>
+            <select class="form-select" name="ilot1" id="ilot1_id">
+              <option selected value="0" label="Select a LOT #"></option>
               {% for ilot in ilots %}
-              <option value="{{ilot.id}}">{{ilot.lot_num}}</option>
+              <option value="{{ilot.id}}" label="{{ilot.lot_num}}">{{ilot.prod_name}}</option>
               {% endfor %}
             </select>
           </div>
           <div class="col-md-3">
             <label class="form-label fw-bold">Product Name</label>
-            <input type="text" class="form-control" name="iname1" value="{{request.session.name}}">
+            <input id="iname1_id" disabled type="text" class="form-control" name="iname1" value="{{request.session.name}}">
           </div>
           <div class="col-md-2">
             <label class="form-label fw-bold">Quantity</label>
@@ -70,16 +81,16 @@
         </div>
         <div class="row g-5">
           <div class="col-md-3">
-            <select class="form-select" name="ilot2">
-              <option selected value="0">Select a LOT #</option>
-              <option value="9999">NONE</option>
+            <select class="form-select" name="ilot2" id="ilot2_id">
+              <option selected value="0" label="Select a LOT #"></option>
+              <option value="9999" label="NONE"></option>
               {% for ilot in ilots %}
-              <option value="{{ilot.id}}">{{ilot.lot_num}}</option>
+              <option value="{{ilot.id}}" label="{{ilot.lot_num}}">{{ilot.prod_name}}</option>
               {% endfor %}
             </select>
           </div>
           <div class="col-md-3">
-            <input type="text" class="form-control" name="iname2" value="{{request.session.name}}">
+            <input id="iname2_id" disabled type="text" class="form-control" name="iname2" value="{{request.session.name}}">
           </div>
           <div class="col-md-2 mb-4">
             <input type="number" class="form-control" name="iqty2" value="{{request.session.qty}}">
@@ -87,7 +98,7 @@
         </div>
         <div class="row g-5 mb-2">
           <div class="col-md-2">
-            <label class="form-label fw-bold">Finished Product LOT#</label>
+            <label class="form-label fw-bold">Finished LOT#</label>
             <input type="text" class="form-control" name="flot" value="{{request.session.name}}">
           </div>
           <div class="col-md-2">
@@ -105,7 +116,7 @@
         </div>
 
         <fieldset class="border p-2 mb-3 col-8">
-          <legend>Production Employees</legend>
+          <legend>Production Workers</legend>
           <div class="row mb-2">
             <div class="col-md-4">
               <div class="input-group">
@@ -251,9 +262,11 @@
           </div>
           <div class="col-2">
             <select class="form-select" name="remployee">
-              <option selected value="0">Select Employee</option>
+              <option selected value="0">Select Supervisor</option>
               {% for employee in employees %}
+              {% if employee.level == 'Supervisor' %}
               <option value="{{employee.id}}">{{employee.first_name}} {{employee.last_name}}</option>
+              {% endif %}
               {% endfor %}
             </select>
           </div>

@@ -8,3 +8,4 @@ var modalURL = deleteModal.querySelector('#delete_id')
 modalBodyText.textContent = 'Are you sure you want to delete (' + delete_name + ')'
 modalURL.href = '/brc/user/delete/' + delete_id
 })
+
