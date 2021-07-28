@@ -27,8 +27,8 @@ def users(request):
   return render(request, 'users_list.html', context)
 
 def user_add(request):
-  if 'logged_in' not in request.session:
-      return redirect('/')
+  if 'logged_in' not in request.session or not request.session['user_level'] == "Admin":
+    return redirect('/')
   if request.method == "GET":
     return render(request, 'user_add_edit.html')
   else:
@@ -387,7 +387,7 @@ def receiving(request):
       # print('aaa', x.product.best_by)
       # print('sss', x.employee.first_name)
     context = {
-      'others': Receive.objects.all().order_by('receive_date'),
+      'others': Receive.objects.all().order_by('-receive_date')[:3],
       'source': 'Receiving',
       'path': 'receiving',
     }
@@ -580,7 +580,7 @@ def shipping(request):
   request.session['employee'] = ''
   if request.path == '/brc/shipping':
     context = {
-      'others': Ship.objects.all().order_by('ship_date'),
+      'others': Ship.objects.all().order_by('-ship_date')[:3],
       'source': 'Shipping',
       'path': 'shipping',
     }

@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{source}} Dashboard</title>
+  <title>{{source}} Report</title>
 
   {% load static %}
   <!-- Bootstrap TAGS from (getbootstrap.com/docs) -->
@@ -20,8 +20,7 @@
 <body>
   <div class="container mb-5">
     <div class="d-flex bd-highlight">
-      <p class="p-2 flex-grow-1 bd-highlight fs-5 fw-bold mt-5">{{source}} Manager<a href="/brc/{{path}}/add" class="btn btn-success ms-5" role="button">Add New {{source}} Entry</a>
-      </p>
+      <p class="p-2 flex-grow-1 bd-highlight fs-5 fw-bold mt-5">{{source}} Report</p>
       <p class="p-3 bd-highlight"><a href="/brc">Home</a></p>
       <p class="p-3 flex-shrink-1 bd-highlight fw-bold">Loggen in as {{request.session.first_name}}!</p>
       <p class="p-3 flex-shrink bd-highlight"><a href="/">Logout</a></p>
@@ -29,36 +28,21 @@
     <table class="table">
       <thead>
         <tr>
-          <th scope="col">Date</th>
-          <th scope="col">Product</th>
           <th scope="col">LOT #</th>
+          <th scope="col">Product</th>
           <th scope="col">Best By</th>
-          {% if path == 'receiving' %}
-          <th scope="col">Supplier</th>
-          <th scope="col">Received By</th>
-          {% else %}
-          <th scope="col">Customer</th>
-          <th scope="col">Shipped By</th>
-          {% endif %}
+          <th scope="col">Action</th>
         </tr>
       </thead>
       <tbody>
-        {% for other in others %}
+        {% for product in products %}
         <tr>
-          {% if path == 'receiving' %}
-          <td>{{other.receive_date|date:"m/d/Y"}}</td>
-          {% else %}
-          <td>{{other.ship_date|date:"m/d/Y"}}</td>
-          {% endif %}
-          <td>{{other.product.prod_name}}</td>
-          <td>{{other.product.lot_num}}</td>
-          <td>{{other.product.best_by|date:"m/d/Y"}}</td>
-          {% if path == 'receiving' %}
-          <td>{{other.supplier.name}}</td>
-          {% else %}
-          <td>{{other.customer.name}}</td>
-          {% endif %}
-          <td>{{other.employee.first_name}} {{other.employee.last_name}}</td>
+          <td>{{product.lot_num}}</td>
+          <td>{{product.prod_name}}</td>
+          <td>{{product.best_by|date:"m/d/Y"}}</td>
+          <td>
+            <a href="/brc/{{path}}/edit/{{product.id}}" class="btn btn-primary" role="button">Edit</a>
+          </td>
         </tr>
         {% endfor %}
       </tbody>

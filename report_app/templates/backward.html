@@ -40,7 +40,8 @@
                 <th scope="col">Production QTY</th>
                 <th scope="col">Recieved On</th>
                 <th scope="col">Recieved By</th>
-                <th scope="col">Total QTY Received</th>
+                <th scope="col">QTY Received</th>
+                <th scope="col">Carrier</th>
               </tr>
             </thead>
             <tbody>
@@ -49,8 +50,9 @@
                 <td>{{prod_iproduct.product.prod_name}}</td>
                 <td>{{prod_iproduct.quantity}}</td>
                 <td>{{recieved_from.receive_date|date:"m/d/Y"}}</td>
-                <td>{{recieved_from.employee.first_name}}</td>
+                <td>{{recieved_from.employee.first_name}} {{recieved_from.employee.last_name}}</td>
                 <td>{{recieved_from.qty}}</td>
+                <td>{{recieved_from.trucker.name}}</td>
               </tr>
             </tbody>
           </table>
@@ -64,7 +66,8 @@
                 <th scope="col">Production QTY</th>
                 <th scope="col">Recieved On</th>
                 <th scope="col">Recieved By</th>
-                <th scope="col">Total QTY Received</th>
+                <th scope="col">QTY Received</th>
+                <th scope="col">Carrier</th>
               </tr>
             </thead>
             <tbody>
@@ -73,27 +76,30 @@
                 <td>{{prod_iproduct1.product.prod_name}}</td>
                 <td>{{prod_iproduct1.quantity}}</td>
                 <td>{{recieved_from1.receive_date|date:"m/d/Y"}}</td>
-                <td>{{recieved_from1.employee.first_name}}</td>
+                <td>{{recieved_from1.employee.first_name}} {{recieved_from1.employee.last_name}}</td>
                 <td>{{recieved_from1.qty}}</td>
+                <td>{{recieved_from1.trucker.name}}</td>
               </tr>
               <tr>
                 <td>{{prod_iproduct2.product.lot_num}}</td>
                 <td>{{prod_iproduct2.product.prod_name}}</td>
                 <td>{{prod_iproduct2.quantity}}</td>
                 <td>{{recieved_from2.receive_date|date:"m/d/Y"}}</td>
-                <td>{{recieved_from2.employee.first_name}}</td>
+                <td>{{recieved_from2.employee.first_name}} {{recieved_from2.employee.last_name}}</td>
                 <td>{{recieved_from2.qty}}</td>
+                <td>{{recieved_from2.trucker.name}}</td>
               </tr>
             </tbody>
           </table>
         {% endif %}
-      {% else %}
+      {% else %} <!-- product.type == 'I' -->
         <p>Best By Date: {{this_product.best_by|date:"m/d/Y"}}</p>
         <p>Received On: {{recieved_from.receive_date|date:"m/d/Y"}}</p>
         <p>Received QTY: {{recieved_from.qty}}</p>
-        <p>Received By: {{recieved_from.employee.first_name}}</p>
+        <p>Received By: {{recieved_from.employee.first_name}} {{recieved_from.employee.last_name}}</p>
         <p>Supplier: {{recieved_from.supplier.name}}</p>
         <p>Carrier: {{recieved_from.trucker.name}}</p>
+        <p>Truck #: {{recieved_from.truck_num}}</p>
         {% endif %}
     {% else %}
       {% if messages %}

@@ -192,3 +192,59 @@ def backward(request):
         context['product_type'] = 'F'
   return render(request, 'backward.html', context)
 
+def report_receiving(request):
+  if 'logged_in' not in request.session:
+    return redirect('/')
+  context = {
+    'receives': Receive.objects.all().order_by('-receive_date'),
+    'source': 'Receiving',
+    'path': 'receiving',
+  }
+  return render(request, 'recv_report.html', context)
+
+def report_shipped(request):
+  if 'logged_in' not in request.session:
+    return redirect('/')
+  context = {
+    'ships': Ship.objects.all().order_by('-ship_date'),
+    'source': 'Shipping',
+    'path': 'shipping',
+  }
+  return render(request, 'ship_report.html', context)
+
+def edit_docs(request):
+  if 'logged_in' not in request.session or not request.session['user_level'] == "Admin":
+    return redirect('/')
+  if request.method == "GET":
+    context = {
+      'results': False,
+    }
+    return render(request, 'edit_docs.html', context)
+  else:
+    context = {
+    'ships': Ship.objects.all().order_by('-ship_date'),
+    'source': 'Edit',
+    'path': 'edit',
+    'results': True,
+    }
+  return render(request, 'edit_docs.html', context)
+
+def report_incoming(request):
+  if 'logged_in' not in request.session:
+    return redirect('/')
+  context = {
+    'products': Product.objects.filter(type='I').order_by('lot_num'),
+    'source': 'Incoming Product',
+    'path': 'incoming',
+  }
+  return render(request, 'product_report.html', context)
+
+def report_finished(request):
+  if 'logged_in' not in request.session:
+    return redirect('/')
+  context = {
+    'products': Product.objects.filter(type='F').order_by('lot_num'),
+    'source': 'Finished Product',
+    'path': 'finished',
+  }
+  return render(request, 'product_report.html', context)

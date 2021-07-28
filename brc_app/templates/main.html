@@ -35,36 +35,33 @@
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/brc">Home</a>
+              <a class="nav-link active" href="/brc/receiving" data-bs-toggle="tooltip" title="Add receiving document!">Receiving</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/brc/receiving">Receiving</a>
+              <a class="nav-link active" href="/brc/production" data-bs-toggle="tooltip" title="Add production document!">Production</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/brc/production">Production</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/brc/shipping">Shipping</a>
+              <a class="nav-link active" href="/brc/shipping" data-bs-toggle="tooltip" title="Add shipping document!">Shipping</a>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Product Traceability</a>
+              <a class="nav-link dropdown-toggle active" href="" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Product tracing!">Product Traceability</a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                 <li><a class="dropdown-item" href="/reports/forward">Forward Tracing</a></li>
                 <li><a class="dropdown-item" href="/reports/backward">Backward Tracing</a></li>
               </ul>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Reports</a>
+              <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Run detailed reports!">Reports</a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <li><a class="dropdown-item" href="#">Receiving Report</a></li>
-                <li><a class="dropdown-item" href="#">Shipping Report</a></li>
-                <li><a class="dropdown-item" href="#">Production Report</a></li>
-                <li><a class="dropdown-item" href="#">Incoming Product List</a></li>
-                <li><a class="dropdown-item" href="#">Finished Product List</a></li>
+                <li><a class="dropdown-item" href="/reports/rep_rcv">Receiving Report</a></li>
+                <li><a class="dropdown-item" href="/reports/rep_shp">Shipping Report</a></li>
+                <!-- <li><a class="dropdown-item" href="#">Production Report</a></li> -->
+                <li><a class="dropdown-item" href="/reports/rep_inc">Incoming Product List</a></li>
+                <li><a class="dropdown-item" href="/reports/rep_fin">Finished Product List</a></li>
               </ul>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">House Keeping</a>
+              <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Add/Edit menu!">House Keeping</a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                 <li><a class="dropdown-item" href="/brc/employee">Employees</a></li>
                 <li><a class="dropdown-item" href="/brc/customer">Customers</a></li>
@@ -73,12 +70,12 @@
               </ul>
             </li>
             {% if request.session.user_level == "Admin" %}
-            <li class="nav-item">
-              <a class="nav-link" href="/brc/users">Manage Users</a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-              <a class="nav-link disabled" href="#">Manage Users</a>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Admin only menu!">Admin Menu</a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <li><a class="dropdown-item" href="/reports/edit">Edit Documents</a></li>
+                <li><a class="dropdown-item" href="/brc/users">Manage Users</a></li>
+              </ul>
             </li>
             {% endif %}
           </ul>
