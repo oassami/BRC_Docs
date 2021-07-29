@@ -28,23 +28,39 @@
     <table class="table">
       <thead>
         <tr>
+          {% if path == 'incoming' %}
+          <th scope="col">Recieved On</th>
+          {% else %}
+          <th scope="col">Produced On</th>
+          {% endif %}
           <th scope="col">LOT #</th>
           <th scope="col">Product</th>
           <th scope="col">Best By</th>
-          <th scope="col">Action</th>
+        <th scope="col">QTY</th>
         </tr>
       </thead>
       <tbody>
-        {% for product in products %}
-        <tr>
-          <td>{{product.lot_num}}</td>
-          <td>{{product.prod_name}}</td>
-          <td>{{product.best_by|date:"m/d/Y"}}</td>
-          <td>
-            <a href="/brc/{{path}}/edit/{{product.id}}" class="btn btn-primary" role="button">Edit</a>
-          </td>
-        </tr>
-        {% endfor %}
+        {% if path == 'incoming' %}
+          {% for product in products %}
+          <tr>
+            <td>{{product.received.first.receive_date|date:"m/d/Y"}}</td>
+            <td>{{product.lot_num}}</td>
+            <td>{{product.prod_name}}</td>
+            <td>{{product.best_by|date:"m/d/Y"}}</td>
+            <td>{{product.received.first.qty}}</td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          {% for product in products %}
+            <tr>
+              <td>{{product.prod_produceds.first.production.production_date|date:"m/d/Y"}}</td>
+              <td>{{product.lot_num}}</td>
+              <td>{{product.prod_name}}</td>
+              <td>{{product.best_by|date:"m/d/Y"}}</td>
+              <td>{{product.prod_produceds.first.quantity}}</td>
+            </tr>
+          {% endfor %}
+        {% endif %}
       </tbody>
     </table>
   </div>

@@ -37,7 +37,6 @@
           <th scope="col">Recieved By</th>
           <th scope="col">Carrier</th>
           <th scope="col">Truck #</th>
-          <th scope="col">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -52,9 +51,6 @@
           <td>{{receive.employee.first_name}} {{receive.employee.last_name}}</td>
           <td>{{receive.trucker.name}}</td>
           <td>{{receive.truck_num}}</td>
-          <td>
-            <a href="/brc/{{path}}/edit/{{receive.id}}" class="btn btn-primary" role="button">Edit</a>
-          </td>
         </tr>
         {% endfor %}
       </tbody>

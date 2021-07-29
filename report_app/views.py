@@ -212,28 +212,11 @@ def report_shipped(request):
   }
   return render(request, 'ship_report.html', context)
 
-def edit_docs(request):
-  if 'logged_in' not in request.session or not request.session['user_level'] == "Admin":
-    return redirect('/')
-  if request.method == "GET":
-    context = {
-      'results': False,
-    }
-    return render(request, 'edit_docs.html', context)
-  else:
-    context = {
-    'ships': Ship.objects.all().order_by('-ship_date'),
-    'source': 'Edit',
-    'path': 'edit',
-    'results': True,
-    }
-  return render(request, 'edit_docs.html', context)
-
 def report_incoming(request):
   if 'logged_in' not in request.session:
     return redirect('/')
   context = {
-    'products': Product.objects.filter(type='I').order_by('lot_num'),
+    'products': Product.objects.filter(type='I').order_by('-received__receive_date'),
     'source': 'Incoming Product',
     'path': 'incoming',
   }
@@ -243,8 +226,174 @@ def report_finished(request):
   if 'logged_in' not in request.session:
     return redirect('/')
   context = {
-    'products': Product.objects.filter(type='F').order_by('lot_num'),
+    'products': Product.objects.filter(type='F').order_by('-prod_produceds__production__production_date'),
     'source': 'Finished Product',
     'path': 'finished',
   }
   return render(request, 'product_report.html', context)
+
+def edit(request):
+  if 'logged_in' not in request.session or not request.session['user_level'] == "Admin":
+    return redirect('/')
+  if request.method == "GET":
+    context = {
+      'source': 'Edit',
+      'results': False,
+    }
+    return render(request, 'edit.html', context)
+  else:
+    errors = Product.objects.edit_docValidation(request.POST)
+    if errors:
+      for key, value in errors.items():
+        messages.error(request, value)
+      return redirect('/reports/edit')
+    if request.POST['btnradio'] == '1': # Receiving
+      context = {
+        'general': Receive.objects.all().order_by('-receive_date').filter(receive_date=request.POST['doc_date']),
+        'source': 'Receiving',
+        'path': 'receiving',
+        'results': True,
+      }
+    if request.POST['btnradio'] == '2': # Shipping
+      context = {
+        'general': Ship.objects.all().order_by('-ship_date').filter(ship_date=request.POST['doc_date']),
+        # 'general': Ship.objects.all().order_by('-ship_date'),
+        'source': 'Shipping',
+        'path': 'shipping',
+        'results': True,
+      }
+    if request.POST['btnradio'] == '3': # Incoming Product
+      context = {
+        'general': Product.objects.filter(type='I').filter(received__receive_date=request.POST['doc_date']),
+        'source': 'Incoming',
+        'path': 'incoming',
+        'results': True,
+      }
+    if request.POST['btnradio'] == '4': # Finished Product
+      context = {
+        'general': Product.objects.filter(type='F').filter(prod_produceds__production__production_date=request.POST['doc_date']),
+        'source': 'Finished',
+        'path': 'finished',
+        'results': True,
+      }
+  return render(request, 'edit.html', context)
+
+def edit_receiving(request, doc_id):
+  if 'logged_in' not in request.session or not request.session['user_level'] == "Admin":
+    return redirect('/')
+  if request.method == "GET":
+    context = {
+      'rec_info': Receive.objects.get(id=doc_id),
+      'cus_sup_info': Supplier.objects.all().exclude(active=False),
+      'truck_info': Truck.objects.all().exclude(active=False),
+      'employees': Employee.objects.all().exclude(active=False),
+      'source': 'Receiving',
+      'path': 'receiving',
+      'results': False,
+    }
+    return render(request, 'edit_rcv.html', context)
+  else:
+    this_record = Receive.objects.get(id=doc_id)
+    errors = Receive.objects.editRSValidation(request.POST, this_record.product.lot_num)
+    if errors:
+      for key, value in errors.items():
+        messages.error(request, value)
+      return redirect(f'/reports/receiving/{doc_id}')
+    this_product = Product.objects.get(lot_num=request.POST['lot'])
+    this_supplier = Supplier.objects.get(id=request.POST['supp_cust'])
+    this_truck = Truck.objects.get(id=request.POST['truck'])
+    this_employee = Employee.objects.get(id=request.POST['employee'])
+    this_record.receive_date = request.POST['date']
+    this_record.product = this_product
+    this_record.qty = request.POST['qty']
+    this_record.supplier = this_supplier
+    this_record.trucker = this_truck
+    this_record.truck_num = request.POST['truck_no']
+    this_record.employee = this_employee
+    this_record.save()
+  return redirect('/reports/edit')
+
+def edit_shipping(request, doc_id):
+  if 'logged_in' not in request.session or not request.session['user_level'] == "Admin":
+    return redirect('/')
+  if request.method == "GET":
+    context = {
+      'rec_info': Ship.objects.get(id=doc_id),
+      'cus_sup_info': Customer.objects.all().exclude(active=False),
+      'truck_info': Truck.objects.all().exclude(active=False),
+      'employees': Employee.objects.all().exclude(active=False),
+      'source': 'Shipping',
+      'path': 'shipping',
+      'results': False,
+    }
+    return render(request, 'edit_shp.html', context)
+  else:
+    this_record = Ship.objects.get(id=doc_id)
+    errors = Ship.objects.editRSValidation(request.POST, this_record.product.lot_num)
+    if errors:
+      for key, value in errors.items():
+        messages.error(request, value)
+      return redirect(f'/reports/shipping/{doc_id}')
+    this_product = Product.objects.get(lot_num=request.POST['lot'])
+    this_customer = Customer.objects.get(id=request.POST['supp_cust'])
+    this_truck = Truck.objects.get(id=request.POST['truck'])
+    this_employee = Employee.objects.get(id=request.POST['employee'])
+    this_record.ship_date = request.POST['date']
+    this_record.product = this_product
+    this_record.qty = request.POST['qty']
+    this_record.customer = this_customer
+    this_record.trucker = this_truck
+    this_record.truck_num = request.POST['truck_no']
+    this_record.employee = this_employee
+    this_record.save()
+  return redirect('/reports/edit')
+
+def edit_incoming(request, doc_id):
+  if 'logged_in' not in request.session or not request.session['user_level'] == "Admin":
+    return redirect('/')
+  if request.method == "GET":
+    this_product = Product.objects.get(id=doc_id)
+    context = {
+      'rec_info': this_product,
+      'source': 'Incoming',
+      'path': 'incoming',
+      'results': False,
+    }
+    return render(request, 'edit_inc.html', context)
+  else:
+    this_record = Product.objects.get(id=doc_id)
+    errors = Product.objects.editFIValidation(request.POST)
+    if errors:
+      for key, value in errors.items():
+        messages.error(request, value)
+      return redirect(f'/reports/incoming/{doc_id}')
+    this_record.lot_num=request.POST['lot']
+    this_record.prod_name = request.POST['product']
+    this_record.best_by = request.POST['best_by']
+    this_record.save()
+  return redirect('/reports/edit')
+
+def edit_finished(request, doc_id):
+  if 'logged_in' not in request.session or not request.session['user_level'] == "Admin":
+    return redirect('/')
+  if request.method == "GET":
+    this_product = Product.objects.get(id=doc_id)
+    context = {
+      'rec_info': this_product,
+      'source': 'Finished',
+      'path': 'finished',
+      'results': False,
+    }
+    return render(request, 'edit_inc.html', context)
+  else:
+    this_record = Product.objects.get(id=doc_id)
+    errors = Product.objects.editFIValidation(request.POST)
+    if errors:
+      for key, value in errors.items():
+        messages.error(request, value)
+      return redirect(f'/reports/finished/{doc_id}')
+    this_record.lot_num=request.POST['lot']
+    this_record.prod_name = request.POST['product']
+    this_record.best_by = request.POST['best_by']
+    this_record.save()
+  return redirect('/reports/edit')

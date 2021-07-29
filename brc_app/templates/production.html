@@ -43,284 +43,284 @@
 <body>
   <div class="container mb-5">
     {% if add %}
-    <div class="d-flex bd-highlight">
-      <p class="p-2 flex-grow-1 bd-highlight fs-5 fw-bold mt-5">Production Manager</p>
-      <p class="p-3 bd-highlight"><a href="/brc">Home</a></p>
-      <p class="p-3 flex-shrink-1 bd-highlight fw-bold">Loggen in as {{request.session.first_name}}!</p>
-      <p class="p-3 flex-shrink bd-highlight"><a href="/">Logout</a></p>
-    </div>
-    {% if messages %}
-    {% for message in messages %}
-    <p style="color: red;">{{ message }}</p>
-    {% endfor %}
-    {% endif %}
-    <h5 class="mt-3">Add a Production Entry</h5>
-      <form action="/brc/production/add" method="POST">
-        {% csrf_token %}
-        <div class="row g-5 mb-4 mt-1">
-          <div class="col-2">
-            <label class="form-label fw-bold">Production Date</label>
-          </div>
-          <div class="col-auto">
-            <input type="date" class="form-control" name="pdate" value="{{request.session.pdate}}">
-          </div>
-        </div>
-        <div class="row g-5 mb-2">
-          <div class="col-md-3">
-            <label class="form-label fw-bold">Incoming LOT#</label>
-            <select class="form-select" name="ilot1" id="ilot1_id">
-              <option selected value="0" label="Select a LOT #"></option>
-              {% for ilot in ilots %}
-              <option value="{{ilot.id}}" label="{{ilot.lot_num}}">{{ilot.prod_name}}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label fw-bold">Product Name</label>
-            <input id="iname1_id" type="text" class="form-control" readonly style="background-color: white" name="iname1" value="{{request.session.name}}">
-          </div>
-          <div class="col-md-2">
-            <label class="form-label fw-bold">Quantity</label>
-            <input type="number" class="form-control" name="iqty1" value="{{request.session.qty}}">
-          </div>
-        </div>
-        <div class="row g-5">
-          <div class="col-md-3">
-            <select class="form-select" name="ilot2" id="ilot2_id">
-              <option selected value="0" label="Select a LOT #"></option>
-              <option value="9999" label="NONE"></option>
-              {% for ilot in ilots %}
-              <option value="{{ilot.id}}" label="{{ilot.lot_num}}">{{ilot.prod_name}}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="col-md-3">
-            <input id="iname2_id" readonly style="background-color: white" type="text" class="form-control" name="iname2" value="{{request.session.name}}">
-          </div>
-          <div id="iqty2_div" class="col-md-2 mb-4">
-            <input type="number" id="iqty2_id" style="background-color: white" class="form-control" name="iqty2" value="{{request.session.qty}}">
-          </div>
-        </div>
-        <div class="row g-5 mb-2">
-          <div class="col-md-2">
-            <label class="form-label fw-bold">Finished LOT#</label>
-            <input type="text" class="form-control" name="flot" value="{{request.session.name}}">
-          </div>
-          <div class="col-md-2">
-            <label class="form-label fw-bold">Product Name</label>
-            <input type="text" class="form-control" name="fname" value="{{request.session.name}}">
-          </div>
-          <div class="col-md-2">
-            <label class="form-label fw-bold">Quantity</label>
-            <input type="number" class="form-control" name="fqty" value="{{request.session.qty}}">
-          </div>
-          <div class="col-md-2">
-            <label class="form-label fw-bold">Best By</label>
-            <input type="date" class="form-control" name="fbbdate" value="{{request.session.qty}}">
-          </div>
-        </div>
-
-        <fieldset class="border p-2 mb-3 col-8">
-          <legend>Production Workers</legend>
-          <div class="row mb-2">
-            <div class="col-md-4">
-              <div class="input-group">
-                <label class="input-group-text col-6">Push-In/Collect</label>
-                <select class="form-select" name="pemp1">
-                  <option selected value="0">Select</option>
-                  <option value="9999">NO-ONE</option>
-                  {% for employee in employees %}
-                  <option value="{{employee.id}}">{{employee.first_name}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="input-group">
-                <label class="input-group-text col-6">Case/Cardboard</label>
-                <select class="form-select" name="pemp2">
-                  <option selected value="0">Select</option>
-                  <option value="9999">NO-ONE</option>
-                  {% for employee in employees %}
-                  <option value="{{employee.id}}">{{employee.first_name}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="input-group">
-                <label class="input-group-text col-6">Box Open/Dumper</label>
-                <select class="form-select" name="pemp3">
-                  <option selected value="0">Select</option>
-                  <option value="9999">NO-ONE</option>
-                  {% for employee in employees %}
-                  <option value="{{employee.id}}">{{employee.first_name}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="row mb-2">
-            <div class="col-md-4">
-              <div class="input-group">
-                <label class="input-group-text col-6">Metal Detector</label>
-                <select class="form-select" name="pemp4">
-                  <option selected value="0">Select</option>
-                  <option value="9999">NO-ONE</option>
-                  {% for employee in employees %}
-                  <option value="{{employee.id}}">{{employee.first_name}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="input-group">
-                <label class="input-group-text col-6">Taping</label>
-                <select class="form-select"  name="pemp5">
-                  <option selected value="0">Select</option>
-                  <option value="9999">NO-ONE</option>
-                  {% for employee in employees %}
-                  <option value="{{employee.id}}">{{employee.first_name}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="input-group">
-                <label class="input-group-text col-6">Labeling</label>
-                <select class="form-select" name="pemp6">
-                  <option selected value="0">Select</option>
-                  <option value="9999">NO-ONE</option>
-                  {% for employee in employees %}
-                  <option value="{{employee.id}}">{{employee.first_name}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="row mb-2">
-            <div class="col-md-4">
-              <div class="input-group">
-                <label class="input-group-text col-6">Sort Conveyor</label>
-                <select class="form-select" name="pemp7">
-                  <option selected value="0">Select</option>
-                  <option value="9999">NO-ONE</option>
-                  {% for employee in employees %}
-                  <option value="{{employee.id}}">{{employee.first_name}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="input-group">
-                <label class="input-group-text col-6">Sort Conveyor</label>
-                <select class="form-select" name="pemp8">
-                  <option selected value="0">Select</option>
-                  <option value="9999">NO-ONE</option>
-                  {% for employee in employees %}
-                  <option value="{{employee.id}}">{{employee.first_name}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="input-group">
-                <label class="input-group-text col-6">Sort Conveyor</label>
-                <select class="form-select" name="pemp9">
-                  <option selected value="0">Select</option>
-                  <option value="9999">NO-ONE</option>
-                  {% for employee in employees %}
-                  <option value="{{employee.id}}">{{employee.first_name}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-          </div>
-        </fieldset>
-        <div class="row g-5 mb-2">
-          <div class="col-2">
-            <label class="form-label fw-bold">Liner LOT #</label>
-          </div>
-          <div class="col-auto">
-            <input type="text" class="form-control" name="liner" value="{{request.session.truck_no}}">
-          </div>
-        </div>
-        <div class="row g-5 mb-2">
-          <div class="col-2">
-            <label class="form-label fw-bold">Tubs LOT #</label>
-          </div>
-          <div class="col-auto">
-            <input type="text" class="form-control" name="tubs" value="{{request.session.truck_no}}">
-          </div>
-        </div>
-        <div class="row g-5 mb-4">
-          <div class="col-2">
-            <label class="form-label fw-bold">Lids LOT #</label>
-          </div>
-          <div class="col-auto">
-            <input type="text" class="form-control" name="lids" value="{{request.session.truck_no}}">
-          </div>
-        </div>
-        <div class="row g-5 mb-2">
-          <div class="col-2">
-            <label class="form-label fw-bold">Released By</label>
-          </div>
-          <div class="col-2">
-            <select class="form-select" name="remployee">
-              <option selected value="0">Select Supervisor</option>
-              {% for employee in employees %}
-              {% if employee.level == 'Supervisor' %}
-              <option value="{{employee.id}}">{{employee.first_name}} {{employee.last_name}}</option>
-              {% endif %}
-              {% endfor %}
-            </select>
-          </div>
-        </div>
-        <div class="row g-5 mb-4">
-          <div class="col-2">
-            <label class="form-label fw-bold">Release Date</label>
-          </div>
-          <div class="col-auto">
-            <input type="date" class="form-control" name="rdate" value="{{request.session.date}}">
-          </div>
-        </div>
-        <div class="d-grid gap-2 col-2">
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
-      </form><br>
-      <a href="/brc/production">Back to Production Manager</a>
-      {% else %}
       <div class="d-flex bd-highlight">
-        <p class="p-2 flex-grow-1 bd-highlight fs-5 fw-bold mt-5">Production Manager<a href="/brc/production/add"
-            class="btn btn-success ms-5" role="button">Add New Production Entry</a></p>
+        <p class="p-2 flex-grow-1 bd-highlight fs-5 fw-bold mt-5">Production Manager</p>
         <p class="p-3 bd-highlight"><a href="/brc">Home</a></p>
         <p class="p-3 flex-shrink-1 bd-highlight fw-bold">Loggen in as {{request.session.first_name}}!</p>
         <p class="p-3 flex-shrink bd-highlight"><a href="/">Logout</a></p>
       </div>
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Finished Product</th>
-            <th scope="col">LOT #</th>
-            <th scope="col">Best By</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for produ in productions %}
-          <tr>
-            {% if produ.product.type == 'F' %}
-              <td>{{produ.production.production_date|date:"m/d/Y"}}</td>
-              <td>{{produ.product.prod_name}}</td>
-              <td>{{produ.product.lot_num}}</td>
-              <td>{{produ.product.best_by|date:"m/d/Y"}}</td>
-              <td><a href="/brc/production/edit/{{other.id}}" class="btn btn-primary" role="button">Edit</a></td>
-            {% endif %}
+      {% if messages %}
+      {% for message in messages %}
+      <p style="color: red;">{{ message }}</p>
+      {% endfor %}
+      {% endif %}
+      <h5 class="mt-3">Add a Production Entry</h5>
+        <form action="/brc/production/add" method="POST">
+          {% csrf_token %}
+          <div class="row g-5 mb-4 mt-1">
+            <div class="col-2">
+              <label class="form-label fw-bold">Production Date</label>
+            </div>
+            <div class="col-auto">
+              <input type="date" class="form-control" name="pdate" value="{{request.session.pdate}}">
+            </div>
+          </div>
+          <div class="row g-5 mb-2">
+            <div class="col-md-3">
+              <label class="form-label fw-bold">Incoming LOT#</label>
+              <select class="form-select" name="ilot1" id="ilot1_id">
+                <option selected value="0" label="Select a LOT #"></option>
+                {% for ilot in ilots %}
+                <option value="{{ilot.id}}" label="{{ilot.lot_num}}">{{ilot.prod_name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label fw-bold">Product Name</label>
+              <input id="iname1_id" type="text" class="form-control" readonly style="background-color: white" name="iname1" value="{{request.session.name}}">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label fw-bold">Quantity</label>
+              <input type="number" class="form-control" name="iqty1" value="{{request.session.qty}}">
+            </div>
+          </div>
+          <div class="row g-5">
+            <div class="col-md-3">
+              <select class="form-select" name="ilot2" id="ilot2_id">
+                <option selected value="0" label="Select a LOT #"></option>
+                <option value="9999" label="NONE"></option>
+                {% for ilot in ilots %}
+                <option value="{{ilot.id}}" label="{{ilot.lot_num}}">{{ilot.prod_name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-3">
+              <input id="iname2_id" readonly style="background-color: white" type="text" class="form-control" name="iname2" value="{{request.session.name}}">
+            </div>
+            <div id="iqty2_div" class="col-md-2 mb-4">
+              <input type="number" id="iqty2_id" style="background-color: white" class="form-control" name="iqty2" value="{{request.session.qty}}">
+            </div>
+          </div>
+          <div class="row g-5 mb-2">
+            <div class="col-md-2">
+              <label class="form-label fw-bold">Finished LOT#</label>
+              <input type="text" class="form-control" name="flot" value="{{request.session.name}}">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label fw-bold">Product Name</label>
+              <input type="text" class="form-control" name="fname" value="{{request.session.name}}">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label fw-bold">Quantity</label>
+              <input type="number" class="form-control" name="fqty" value="{{request.session.qty}}">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label fw-bold">Best By</label>
+              <input type="date" class="form-control" name="fbbdate" value="{{request.session.qty}}">
+            </div>
+          </div>
+
+          <fieldset class="border p-2 mb-3 col-8">
+            <legend>Production Workers</legend>
+            <div class="row mb-2">
+              <div class="col-md-4">
+                <div class="input-group">
+                  <label class="input-group-text col-6">Push-In/Collect</label>
+                  <select class="form-select" name="pemp1">
+                    <option selected value="0">Select</option>
+                    <option value="9999">NO-ONE</option>
+                    {% for employee in employees %}
+                    <option value="{{employee.id}}">{{employee.first_name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="input-group">
+                  <label class="input-group-text col-6">Case/Cardboard</label>
+                  <select class="form-select" name="pemp2">
+                    <option selected value="0">Select</option>
+                    <option value="9999">NO-ONE</option>
+                    {% for employee in employees %}
+                    <option value="{{employee.id}}">{{employee.first_name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="input-group">
+                  <label class="input-group-text col-6">Box Open/Dumper</label>
+                  <select class="form-select" name="pemp3">
+                    <option selected value="0">Select</option>
+                    <option value="9999">NO-ONE</option>
+                    {% for employee in employees %}
+                    <option value="{{employee.id}}">{{employee.first_name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-md-4">
+                <div class="input-group">
+                  <label class="input-group-text col-6">Metal Detector</label>
+                  <select class="form-select" name="pemp4">
+                    <option selected value="0">Select</option>
+                    <option value="9999">NO-ONE</option>
+                    {% for employee in employees %}
+                    <option value="{{employee.id}}">{{employee.first_name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="input-group">
+                  <label class="input-group-text col-6">Taping</label>
+                  <select class="form-select"  name="pemp5">
+                    <option selected value="0">Select</option>
+                    <option value="9999">NO-ONE</option>
+                    {% for employee in employees %}
+                    <option value="{{employee.id}}">{{employee.first_name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="input-group">
+                  <label class="input-group-text col-6">Labeling</label>
+                  <select class="form-select" name="pemp6">
+                    <option selected value="0">Select</option>
+                    <option value="9999">NO-ONE</option>
+                    {% for employee in employees %}
+                    <option value="{{employee.id}}">{{employee.first_name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-md-4">
+                <div class="input-group">
+                  <label class="input-group-text col-6">Sort Conveyor</label>
+                  <select class="form-select" name="pemp7">
+                    <option selected value="0">Select</option>
+                    <option value="9999">NO-ONE</option>
+                    {% for employee in employees %}
+                    <option value="{{employee.id}}">{{employee.first_name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="input-group">
+                  <label class="input-group-text col-6">Sort Conveyor</label>
+                  <select class="form-select" name="pemp8">
+                    <option selected value="0">Select</option>
+                    <option value="9999">NO-ONE</option>
+                    {% for employee in employees %}
+                    <option value="{{employee.id}}">{{employee.first_name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="input-group">
+                  <label class="input-group-text col-6">Sort Conveyor</label>
+                  <select class="form-select" name="pemp9">
+                    <option selected value="0">Select</option>
+                    <option value="9999">NO-ONE</option>
+                    {% for employee in employees %}
+                    <option value="{{employee.id}}">{{employee.first_name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <div class="row g-5 mb-2">
+            <div class="col-2">
+              <label class="form-label fw-bold">Liner LOT #</label>
+            </div>
+            <div class="col-auto">
+              <input type="text" class="form-control" name="liner" value="{{request.session.truck_no}}">
+            </div>
+          </div>
+          <div class="row g-5 mb-2">
+            <div class="col-2">
+              <label class="form-label fw-bold">Tubs LOT #</label>
+            </div>
+            <div class="col-auto">
+              <input type="text" class="form-control" name="tubs" value="{{request.session.truck_no}}">
+            </div>
+          </div>
+          <div class="row g-5 mb-4">
+            <div class="col-2">
+              <label class="form-label fw-bold">Lids LOT #</label>
+            </div>
+            <div class="col-auto">
+              <input type="text" class="form-control" name="lids" value="{{request.session.truck_no}}">
+            </div>
+          </div>
+          <div class="row g-5 mb-2">
+            <div class="col-2">
+              <label class="form-label fw-bold">Released By</label>
+            </div>
+            <div class="col-2">
+              <select class="form-select" name="remployee">
+                <option selected value="0">Select Supervisor</option>
+                {% for employee in employees %}
+                {% if employee.level == 'Supervisor' %}
+                <option value="{{employee.id}}">{{employee.first_name}} {{employee.last_name}}</option>
+                {% endif %}
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="row g-5 mb-4">
+            <div class="col-2">
+              <label class="form-label fw-bold">Release Date</label>
+            </div>
+            <div class="col-auto">
+              <input type="date" class="form-control" name="rdate" value="{{request.session.date}}">
+            </div>
+          </div>
+          <div class="d-grid gap-2 col-2">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form><br>
+        <a href="/brc/production">Back to Production Manager</a>
+      {% else %}
+        <div class="d-flex bd-highlight">
+          <p class="p-2 flex-grow-1 bd-highlight fs-5 fw-bold mt-5">Production Manager<a href="/brc/production/add"
+              class="btn btn-success ms-5" role="button">Add New Production Entry</a></p>
+          <p class="p-3 bd-highlight"><a href="/brc">Home</a></p>
+          <p class="p-3 flex-shrink-1 bd-highlight fw-bold">Loggen in as {{request.session.first_name}}!</p>
+          <p class="p-3 flex-shrink bd-highlight"><a href="/">Logout</a></p>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Finished Product</th>
+              <th scope="col">LOT #</th>
+              <th scope="col">Best By</th>
+              <th scope="col">QTY</th>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {% for produ in productions %}
+            <tr>
+              {% if produ.product.type == 'F' %}
+                <td>{{produ.production.production_date|date:"m/d/Y"}}</td>
+                <td>{{produ.product.prod_name}}</td>
+                <td>{{produ.product.lot_num}}</td>
+                <td>{{produ.product.best_by|date:"m/d/Y"}}</td>
+                <td>{{produ.quantity}}</td>
+              {% endif %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       {% endif %}
   </div>
 </body>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Documents</title>
+
+  {% load static %}
+  <!-- Bootstrap TAGS from (getbootstrap.com/docs) -->
+  <!-- CSS -->
+  <link href="{% static 'css\bootstrap.min.css' %}" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+  <!-- JavaScript -->
+  <script src="{% static 'js\bootstrap.bundle.min.js' %}" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+  <!-- Bootstrap TAGS -->
+
+</head>
+
+<body>
+  <div class="container mb-5">
+    <div class="d-flex bd-highlight">
+      <p class="p-2 flex-grow-1 bd-highlight fs-5 fw-bold mt-5">Edit Documents</p>
+      <p class="p-3 bd-highlight"><a href="/brc">Home</a></p>
+      <p class="p-3 flex-shrink-1 bd-highlight fw-bold">Loggen in as {{request.session.first_name}}!</p>
+      <p class="p-3 flex-shrink bd-highlight"><a href="/">Logout</a></p>
+    </div>
+    {% if not results %}
+      {% if messages %}
+      {% for message in messages %}
+        <p style="color: red;">{{ message }}</p>
+      {% endfor %}
+      {% endif %}
+      <form action="/reports/edit" method="POST">
+        {% csrf_token %}
+        <p class="fw-bold">Select one of the following:</p>
+        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+          <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" value="1">
+          <label class="btn btn-outline-primary" for="btnradio1">Receiving</label>
+          <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" value="2">
+          <label class="btn btn-outline-primary" for="btnradio2">Shipping</label>
+          <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off" value="3">
+          <label class="btn btn-outline-primary" for="btnradio3">Incoming Product</label>
+          <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off" value="4">
+          <label class="btn btn-outline-primary" for="btnradio4">Finished Product</label>
+        </div>
+        <div class="col-2 g-5 mb-5 mt-5">
+          <label class="form-label fw-bold">Select Date:</label>
+          <input type="date" class="form-control" name="doc_date" value="{{request.session.plot}}">
+        </div>
+        <div class="d-grid gap-2 col-2">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form><br>
+      <a href="/brc">Back to Main Menu</a>
+    {% else %}
+      <p class="p-2 flex-grow-1 bd-highlight fs-5 fw-bold">{{source}} Product</p>
+      {% if source == 'Receiving' %}  
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Product</th>
+              <th scope="col">LOT #</th>
+              <th scope="col">Best By</th>
+              <th scope="col">Supplier</th>
+              <th scope="col">QTY Recieved</th>
+              <th scope="col">Recieved By</th>
+              <th scope="col">Carrier</th>
+              <th scope="col">Truck #</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for receive in general %}
+            <tr>
+              <td>{{receive.receive_date|date:"m/d/Y"}}</td>
+              <td>{{receive.product.prod_name}}</td>
+              <td>{{receive.product.lot_num}}</td>
+              <td>{{receive.product.best_by|date:"m/d/Y"}}</td>
+              <td>{{receive.supplier.name}}</td>
+              <td>{{receive.qty}}</td>
+              <td>{{receive.employee.first_name}} {{receive.employee.last_name}}</td>
+              <td>{{receive.trucker.name}}</td>
+              <td>{{receive.truck_num}}</td>
+              <td>
+                <a href="/reports/{{path}}/{{receive.id}}" class="btn btn-primary" role="button">Edit</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
+      {% if source == 'Shipping' %}  
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Product</th>
+              <th scope="col">LOT #</th>
+              <th scope="col">Best By</th>
+              <th scope="col">Customer</th>
+              <th scope="col">QTY Shipped</th>
+              <th scope="col">Shipped By</th>
+              <th scope="col">Carrier</th>
+              <th scope="col">Truck #</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ship in general %}
+            <tr>
+              <td>{{ship.ship_date|date:"m/d/Y"}}</td>
+              <td>{{ship.product.prod_name}}</td>
+              <td>{{ship.product.lot_num}}</td>
+              <td>{{ship.product.best_by|date:"m/d/Y"}}</td>
+              <td>{{ship.customer.name}}</td>
+              <td>{{ship.qty}}</td>
+              <td>{{ship.employee.first_name}} {{ship.employee.last_name}}</td>
+              <td>{{ship.trucker.name}}</td>
+              <td>{{ship.truck_num}}</td>
+              <td>
+                <a href="/reports/{{path}}/{{ship.id}}" class="btn btn-primary" role="button">Edit</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
+      {% if source == 'Incoming' %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Recieved On</th>
+              <th scope="col">LOT #</th>
+              <th scope="col">Product</th>
+              <th scope="col">Best By</th>
+              <th scope="col">QTY</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for product in general %}
+            <tr>
+              <td>{{product.received.first.receive_date|date:"m/d/Y"}}</td>
+              <td>{{product.lot_num}}</td>
+              <td>{{product.prod_name}}</td>
+              <td>{{product.best_by|date:"m/d/Y"}}</td>
+              <td>{{product.received.first.qty}}</td>
+            <td>
+                <a href="/reports/{{path}}/{{product.id}}" class="btn btn-primary" role="button">Edit</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
+      {% if source == 'Finished' %}
+      <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Produced On</th>
+              <th scope="col">LOT #</th>
+              <th scope="col">Product</th>
+              <th scope="col">Best By</th>
+              <th scope="col">QTY</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for product in general %}
+            <tr>
+              <td>{{product.prod_produceds.first.production.production_date|date:"m/d/Y"}}</td>
+              <td>{{product.lot_num}}</td>
+              <td>{{product.prod_name}}</td>
+              <td>{{product.best_by|date:"m/d/Y"}}</td>
+              <td>{{product.prod_produceds.first.quantity}}</td>
+              <td>
+                <a href="/reports/{{path}}/{{product.id}}" class="btn btn-primary" role="button">Edit</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
+    {% endif %}
+  </div>
+</body>
+
+</html>

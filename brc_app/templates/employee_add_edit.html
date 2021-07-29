@@ -6,9 +6,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   {% if edit %}
-    <title>Edit Employee Profile</title>
+    <title>Edit Worker Profile</title>
   {% else %}
-    <title>Add an Employee</title>
+    <title>Add an Worker</title>
   {% endif %}
   {% load static %}
   <!-- Bootstrap TAGS from (getbootstrap.com/docs) -->
@@ -22,15 +22,15 @@
 <body>
   <div class="container mb-5">
     <div class="d-flex bd-highlight">
-      <p class="p-2 flex-grow-1 bd-highlight fs-3 fw-bold mt-5">Employees Manager</p>
+      <p class="p-2 flex-grow-1 bd-highlight fs-3 fw-bold mt-5">Workers Manager</p>
       <p class="p-3 bd-highlight"><a href="/brc">Home</a></p>
       <p class="p-3 flex-shrink-1 bd-highlight fw-bold">Welcome {{request.session.first_name}}!</p>
       <p class="p-3 flex-shrink bd-highlight"><a href="/">Log Out</a></p>
     </div>
     {% if edit %}
-      <h4 class="mt-5">Edit Employee Profile</h4>
+      <h4 class="mt-5">Edit Worker Profile</h4>
     {% else %}
-      <h4 class="mt-5">Add New Employee</h4>
+      <h4 class="mt-5">Add New Worker</h4>
     {% endif %}
     {% if messages %}
       {% for message in messages %}
@@ -45,7 +45,7 @@
       {% csrf_token %}
       <div class="row g-5 mb-2">
         <div class="col-2">
-          <label class="form-label">Employee ID</label>
+          <label class="form-label">Worker ID</label>
         </div>
         <div class="col-auto">
           <input type="text" class="form-control" name="emp_id" value="{{this_employee.emp_id}}">
@@ -91,7 +91,7 @@
         <button type="submit" class="btn btn-primary">Submit</button>
       </div>
     </form><br>
-    <a href="/brc/employee">Back to Employees Manager</a>
+    <a href="/brc/employee">Back to Workers Manager</a>
   </div>
 </body>
 

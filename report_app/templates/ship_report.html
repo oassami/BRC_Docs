@@ -37,7 +37,6 @@
           <th scope="col">Shipped By</th>
           <th scope="col">Carrier</th>
           <th scope="col">Truck #</th>
-          <th scope="col">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -52,9 +51,6 @@
           <td>{{ship.employee.first_name}} {{ship.employee.last_name}}</td>
           <td>{{ship.trucker.name}}</td>
           <td>{{ship.truck_num}}</td>
-          <td>
-            <a href="/brc/{{path}}/edit/{{ship.id}}" class="btn btn-primary" role="button">Edit</a>
-          </td>
         </tr>
         {% endfor %}
       </tbody>

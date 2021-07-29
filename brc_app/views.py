@@ -378,14 +378,6 @@ def receiving(request):
   request.session['truck_no'] = ''
   request.session['employee'] = ''
   if request.path == '/brc/receiving':
-    # rcv = Receive.objects.all().order_by('receive_date')
-    # for x in rcv:
-      # print(rcv)
-      # print('xxx', x.receive_date)
-      # print('yyy', x.product.prod_name)
-      # print('zzz', x.product.lot_num)
-      # print('aaa', x.product.best_by)
-      # print('sss', x.employee.first_name)
     context = {
       'others': Receive.objects.all().order_by('-receive_date')[:3],
       'source': 'Receiving',
@@ -475,7 +467,7 @@ def production(request):
   request.session['lids'] = ''
   request.session['remployee'] = ''
   request.session['rdate'] = ''
-  prod_products = ProdProduct.objects.select_related('production', 'product')
+  prod_products = ProdProduct.objects.order_by('-production__production_date').select_related('product').filter(product__type='F')
   context = {
     'productions': prod_products,
     'add': False,
@@ -518,7 +510,6 @@ def production_add(request):
     request.session['lids'] = request.POST['lids']
     request.session['remployee'] = request.POST['remployee']
     request.session['rdate'] = request.POST['rdate']
-    # if '/brc/receiving/add' in request.path:
     errors = Production.objects.addProValidation(request.POST)
     if errors:
       for key, value in errors.items():
@@ -564,7 +555,6 @@ def production_add(request):
           employee = this_employee,
           location = prod_locations[i-1])
     return redirect('/brc/production')
-
 
 def shipping(request):
   if 'logged_in' not in request.session:

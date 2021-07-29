@@ -80,7 +80,7 @@ class InfoManager(models.Manager):
       errors['product'] = 'Product must be at least 2 characters.'
     if len(post_data['lot']) < 2:
       errors['lot'] = 'Lot Number must be at least 2 characters.'
-    if not post_data['qty']:
+    if not post_data['qty'] or int(post_data['qty']) < 1:
       errors['qty'] = 'Quantity connot be less than 1.'
     if not post_data['best_by']:
       errors['best_by'] = 'Invalid Best By date...'
@@ -99,18 +99,42 @@ class InfoManager(models.Manager):
       pass
     return errors
 
+  def editRSValidation(self, post_data):
+    errors={}
+    if not post_data['date']:
+      errors['date'] = 'Invalid date...'
+    if not post_data['qty'] or int(post_data['qty']) < 1:
+      errors['qty'] = 'Quantity connot be less than 1.'
+    if post_data['supp_cust'] == '0':
+      errors['supp_cust'] = 'Must select a Supplier.'
+    if post_data['truck'] == '0':
+      errors['truck'] = 'Must select a Trucking Company.'
+    if len(post_data['truck_no']) < 2:
+      errors['truck_no'] = 'Truck Number must be at least 2 characters.'
+    if post_data['employee'] == '0':
+      errors['employee'] = 'Must select an Employee.'
+    return errors
+
+  def editFIValidation(self, post_data):
+    errors={}
+    if len(post_data['product']) < 2:
+      errors['product'] = 'Product must be at least 2 characters.'
+    if len(post_data['lot']) < 2:
+      errors['lot'] = 'Lot Number must be at least 2 characters.'
+    if not post_data['best_by']:
+      errors['best_by'] = 'Invalid Best By date...'
+    return errors
+
   def addShValidation(self, post_data):
     errors={}
     if not post_data['date']:
       errors['date'] = 'Invalid date...'
-    # if len(post_data['product']) < 2:
-      # errors['product'] = 'Product must be at least 2 characters.'
+    if len(post_data['product']) < 2:
+      errors['product'] = 'Product must be at least 2 characters.'
     if post_data['lot'] == '0':
       errors['lot'] = 'Must select a LOT Number'
-    if not post_data['qty']:
+    if not post_data['qty'] or int(post_data['qty']) < 1:
       errors['qty'] = 'Quantity connot be less than 1.'
-    # if not post_data['best_by']:
-    #   errors['best_by'] = 'Invalid Best By date...'
     if post_data['supp_cust'] == '0':
       errors['supp_cust'] = 'Must select a Customer.'
     if post_data['truck'] == '0':
@@ -119,11 +143,11 @@ class InfoManager(models.Manager):
       errors['truck_no'] = 'Truck Number must be at least 2 characters.'
     if post_data['employee'] == '0':
       errors['employee'] = 'Must select an Employee.'
-    # try:
-    #   Product.objects.get(lot_num=post_data['lot'])
-    #   errors['lot'] = "This Lot Number already exists!"
-    # except:
-    #   pass
+    try:
+      Product.objects.get(lot_num=post_data['lot'])
+      errors['lot'] = "This Lot Number already exists!"
+    except:
+      pass
     return errors
 
   def addProValidation(self, post_data):
@@ -132,7 +156,7 @@ class InfoManager(models.Manager):
       errors['pdate'] = 'Invalid Production Date...'
     if post_data['ilot1'] == '0':
       errors['ilot1'] = 'Must select an Incoming Product LOT #.'
-    if not post_data['iqty1']:
+    if not post_data['iqty1'] or int(post_data['iqty1']) < 1:
       errors['iqty1'] = 'Incoming Product Quantity connot be less than 1.'
     if not post_data['flot']:
       errors['flot'] = 'Must select a Finished LOT #.'
@@ -170,6 +194,17 @@ class InfoManager(models.Manager):
         Product.objects.get(lot_num=post_data['plot'])
       except:
         errors['plot'] = "The LOT Number dose NOT exist!"
+    return errors
+
+  def edit_docValidation(self, post_data):
+    errors={}
+    try:
+      if not post_data['btnradio']:
+        pass
+    except:
+      errors['btnradio'] = 'Please select one of the items below'
+    if not post_data['doc_date']:
+      errors['doc_date'] = 'Invalid Date...'
     return errors
 
 class Employee(models.Model):
@@ -229,7 +264,7 @@ class Truck(models.Model):
 
 class Receive(models.Model):
   receive_date = models.DateField()
-  product = models.ForeignKey(Product, on_delete=models.CASCADE)
+  product = models.ForeignKey(Product, related_name='received', on_delete=models.CASCADE)
   qty = models.IntegerField()
   supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
   trucker = models.ForeignKey(Truck, on_delete=models.CASCADE)
@@ -264,8 +299,8 @@ class Production(models.Model):
   objects = InfoManager()
 
 class ProdProduct(models.Model):
-  production = models.ForeignKey(Production, on_delete=models.CASCADE)
-  product = models.ForeignKey(Product, on_delete=models.CASCADE)
+  production = models.ForeignKey(Production, related_name='produced', on_delete=models.CASCADE)
+  product = models.ForeignKey(Product, related_name='prod_produceds', on_delete=models.CASCADE)
   quantity = models.IntegerField()
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
