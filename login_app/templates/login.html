@@ -56,10 +56,10 @@
       </div>
       <button type="submit" class="btn btn-primary">Sign In</button>
     </form>
-    <a href="/user/register">Don't have an account? Register...</a>
-    <!-- {% if request.session.register %} -->
     <!-- <a href="/user/register">Don't have an account? Register...</a> -->
-    <!-- {% endif %} -->
+    {% if request.session.register %}
+      <a href="/user/register">Don't have an account? Register...</a>
+    {% endif %}
   </div>
 </body>
 
