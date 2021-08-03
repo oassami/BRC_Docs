@@ -40,6 +40,7 @@
                 <th scope="col">Name</th>
                 <th scope="col">Production QTY</th>
                 <th scope="col">Recieved On</th>
+                <th scope="col">Supplier</th>
                 <th scope="col">Recieved By</th>
                 <th scope="col">QTY Received</th>
                 <th scope="col">Carrier</th>
@@ -51,6 +52,7 @@
                 <td>{{prod_iproduct.product.prod_name}}</td>
                 <td>{{prod_iproduct.quantity}}</td>
                 <td>{{recieved_from.receive_date|date:"m/d/Y"}}</td>
+                <td>{{recieved_from.supplier.name}}</td>
                 <td>{{recieved_from.employee.first_name}} {{recieved_from.employee.last_name}}</td>
                 <td>{{recieved_from.qty}}</td>
                 <td>{{recieved_from.trucker.name}}</td>
@@ -66,6 +68,7 @@
                 <th scope="col">Name</th>
                 <th scope="col">Production QTY</th>
                 <th scope="col">Recieved On</th>
+                <th scope="col">Supplier</th>
                 <th scope="col">Recieved By</th>
                 <th scope="col">QTY Received</th>
                 <th scope="col">Carrier</th>
@@ -77,6 +80,7 @@
                 <td>{{prod_iproduct1.product.prod_name}}</td>
                 <td>{{prod_iproduct1.quantity}}</td>
                 <td>{{recieved_from1.receive_date|date:"m/d/Y"}}</td>
+                <td>{{recieved_from1.supplier.name}}</td>
                 <td>{{recieved_from1.employee.first_name}} {{recieved_from1.employee.last_name}}</td>
                 <td>{{recieved_from1.qty}}</td>
                 <td>{{recieved_from1.trucker.name}}</td>
@@ -86,6 +90,7 @@
                 <td>{{prod_iproduct2.product.prod_name}}</td>
                 <td>{{prod_iproduct2.quantity}}</td>
                 <td>{{recieved_from2.receive_date|date:"m/d/Y"}}</td>
+                <td>{{recieved_from2.supplier.name}}</td>
                 <td>{{recieved_from2.employee.first_name}} {{recieved_from2.employee.last_name}}</td>
                 <td>{{recieved_from2.qty}}</td>
                 <td>{{recieved_from2.trucker.name}}</td>
